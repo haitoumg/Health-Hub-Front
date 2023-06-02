@@ -45,7 +45,7 @@ function LoginForm() {
       })
       .catch((error) => {
         // Handle any error that occurred during the request
-        setErrorMessage("Invalid email or password");
+        setErrorMessage(error.response.data.message);
         console.error("Error:", error.message);
       });
     //   .then((response) => response.json())
