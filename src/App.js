@@ -8,11 +8,24 @@ import "@fortawesome/fontawesome-free/js/all.js";
 
 import LoginForm from "./components/loginform";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 import Welcome from "./pages/Welcome";
+import Cookies from "js-cookie";
 
 class App extends Component {
+  // Check if the user is logged in
+
+  // Log out the user
+
+  isLoggedIn() {
+    return !!Cookies.get("token");
+  }
+
+  logout() {
+    Cookies.remove("token");
+  }
+
   state = {
     currentTimeFormatState: true,
     messages: [],
@@ -25,25 +38,25 @@ class App extends Component {
   }
 
   fetchEvents = async () => {
-    const response = await fetch("http://localhost:8083/Events");
+    const response = await fetch("http://localhost:9090/appointments");
     const events = await response.json();
-    this.setState({ events, loading: false });
+    this.setState({ events });
   };
 
-  addMessage(message) {
-    const maxLogLength = 5;
-    const newMessage = { message };
-    const messages = [newMessage, ...this.state.messages];
+  // addMessage(message) {
+  //   const maxLogLength = 5;
+  //   const newMessage = { message };
+  //   const messages = [newMessage, ...this.state.messages];
 
-    if (messages.length > maxLogLength) {
-      messages.length = maxLogLength;
-    }
-    this.setState({ messages });
-  }
+  //   if (messages.length > maxLogLength) {
+  //     messages.length = maxLogLength;
+  //   }
+  //   this.setState({ messages });
+  // }
 
   logDataUpdate = (action, ev, id) => {
     const text = ev && ev.text ? ` (${ev.text})` : "";
-    const message = `event ${action}: ${id} ${text}`;
+    const message = `appointment ${action}: ${id} ${text}`;
     this.addMessage(message);
   };
 
@@ -55,29 +68,41 @@ class App extends Component {
 
   render() {
     const { loading, events, currentTimeFormatState } = this.state;
-    if (loading) {
-      return <div> Loading... </div>;
-    }
+    // if (loading) {
+    //   return <div> Loading... </div>;
+    // }
     return (
       <div>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LoginForm />} />{" "}
-            <Route path="Welcome" element={<Welcome />} />{" "}
+            <Route
+              path="/"
+              element={
+                this.isLoggedIn() ? <Navigate to="/scheduler" /> : <LoginForm />
+              }
+            />{" "}
+            <Route
+              path="Welcome"
+              element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
+            />{" "}
             <Route
               path="/scheduler"
               element={
-                <Menu>
-                  <div className="scheduler-container">
-                    <Home />
-                    <Scheduler
-                      events={events}
-                      timeFormatState={currentTimeFormatState}
-                      onDataUpdated={this.logDataUpdate}
-                      onNewEvent={this.handleNewEvent}
-                    />{" "}
-                  </div>{" "}
-                </Menu>
+                this.isLoggedIn() ? (
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <Scheduler
+                        events={events}
+                        timeFormatState={currentTimeFormatState}
+                        onDataUpdated={this.logDataUpdate}
+                        onNewEvent={this.handleNewEvent}
+                      />{" "}
+                    </div>{" "}
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />{" "}
             <Route

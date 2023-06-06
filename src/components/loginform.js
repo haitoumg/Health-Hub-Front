@@ -1,141 +1,189 @@
 import React, { Component, useState } from "react";
 import "./loginform.css";
 import { BrowserRouter, useNavigate } from "react-router-dom";
-
+import axios from "axios";
+import Cookies from "js-cookie";
 
 function LoginForm() {
-    const [login, setLogin] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+  // const [login, setLogin] = useState("");
+  // const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [personne, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = personne;
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const onInputChange = (e) => {
+    setUser({ ...personne, [e.target.name]: e.target.value });
+  };
+  const onSubmet = async (e) => {
+    e.preventDefault();
+    await axios
+      .post("http://localhost:9090/login", personne)
+      //   .then((response) => {
+      //     if (response.ok) {
+      //       // Handle successful response
+      //       navigate("/Welcom");
+      //       //return response.json();
+      //     } else {
+      //       // Handle error response
+      //       // Login was unsuccessful, display an error message
+      //       setErrorMessage("Invalid email or password");
+      //     }
+      //   })
+      .then((data) => {
+        // Serialize the token object into a JSON string
+        const personne = JSON.stringify(data.data);
 
-    const handleEmailChange = (event) => {
-        setLogin(event.target.value);
-    };
+        // Set the cookie with a name 'token' and the serialized token object
+        Cookies.set("token", personne);
+        // Handle the data returned from the API
+        console.log("Response data:", data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        // Handle any error that occurred during the request
+        setErrorMessage(error.response.data.message);
+        console.error("Error:", error.message);
+      });
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     if (data.success) {
+    //       // Login was successful, navigate to the welcome page
+    //       navigate("/scheduler", { state: { login } });
+    //     } else {
+    //       // Login was unsuccessful, display an error message
+    //       setErrorMessage("Invalid email or password");
+    //     }
+    //   });
+  };
 
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    };
+  // const handleEmailChange = (event) => {
+  //     setLogin(event.target.value);
+  // };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-    
-        // Send a POST request to the backend to check if the email and password combination exists
-        fetch("http://localhost:8083/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ login, password }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    // Login was successful, navigate to the welcome page
-                    navigate("/scheduler", { state: { login } });
-                } else {
-                    // Login was unsuccessful, display an error message
-                    setErrorMessage("Invalid email or password");
-                }
-            });
-    };
-    
+  // const handlePasswordChange = (event) => {
+  //     setPassword(event.target.value);
+  // };
 
-    React.useEffect(() => {
-        const home = document.querySelector(".home");
-        const formContainer = document.querySelector(".form_container");
-        const signupBtn = document.querySelector("#signup");
-        const loginBtn = document.querySelector("#login");
+  // const handleSubmit = (event) => {
+  //     event.preventDefault();
 
-        home.classList.add("show");
+  //     // Send a POST request to the backend to check if the email and password combination exists
+  //     fetch("http://localhost:8083/login", {
+  //         method: "POST",
+  //         headers: {
+  //             "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ login, password }),
+  //     })
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //             if (data.success) {
+  //                 // Login was successful, navigate to the welcome page
+  //                 navigate("/scheduler", { state: { login } });
+  //             } else {
+  //                 // Login was unsuccessful, display an error message
+  //                 setErrorMessage("Invalid email or password");
+  //             }
+  //         });
+  // };
 
-        signupBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            formContainer.classList.add("active");
-        });
-        loginBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            formContainer.classList.remove("active");
-        });
-    }, []);
-    return (
-        <div className="cover">
-            <head>
-                <link
-                    rel="stylesheet"
-                    href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
-                />
-            </head>
+  React.useEffect(() => {
+    const home = document.querySelector(".home");
+    const formContainer = document.querySelector(".form_container");
+    const signupBtn = document.querySelector("#signup");
+    const loginBtn = document.querySelector("#login");
 
-            <header className="header">
-                <nav className="nav">
-                    <a href="#" className="nav_logo">
-                        <img className="logo" src="/ntt.png" alt="Logo" />
-                    </a>
-                </nav>
-            </header>
+    home.classList.add("show");
 
-            <section className="home">
-                <div className="form_container">
-                    <div className="form login_form show">
-                        <form onSubmit={handleSubmit}>
-                            <h2>Login</h2>
-
-                            <div className="input_box">
-                                <input
-                                    type="text"
-                                    placeholder="Enter your login"
-                                    required
-                                    value={login}
-                                    onChange={handleEmailChange}
-                                />
-                                <i className="uil uil-envelope-alt email"></i>
-                            </div>
-                            <div className="input_box">
-                                <input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    required
-                                    value={password}
-                                    onChange={handlePasswordChange}
-                                />
-                                <i className="uil uil-lock password"></i>
-                            </div>
-
-                            <button className="button" type="submit">
-                                Login Now
-                            </button>
-
-                            <div className="login_signup">
-                                Forgot password? <a href="#signup" id="signup">click here</a>
-                            </div>
-
-                            {errorMessage && (
-                                <div className="error_message">{errorMessage}</div>
-                            )}
-                        </form>
-                    </div>
-                    <div className="form signup_form">
-                        <form action="#">
-                            <h2>Forgot Password</h2>
-
-                            <div className="input_box">
-                                <input type="email" placeholder="Enter your email" required />
-                                <i className="uil uil-envelope-alt email"></i>
-                            </div>
-
-                            <button className="button">Send Requisite</button>
-
-                            <div className="login_signup">
-                                Back to <a href="#" id="login">Login</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
+    signupBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      formContainer.classList.add("active");
+    });
+    loginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      formContainer.classList.remove("active");
+    });
+  }, []);
+  return (
+    <div className="cover">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+        />
+      </head>{" "}
+      <header className="header">
+        <nav className="nav">
+          <a href="#" className="nav_logo">
+            <img className="logo" src="/ntt.png" alt="Logo" />
+          </a>{" "}
+        </nav>{" "}
+      </header>{" "}
+      <section className="home">
+        <div className="form_container">
+          <div className="form login_form show">
+            <form onSubmit={(e) => onSubmet(e)}>
+              <h2> Login </h2>{" "}
+              <div className="input_box">
+                <input
+                  type="text"
+                  placeholder="Enter your login"
+                  required
+                  value={email}
+                  name="email"
+                  onChange={(e) => onInputChange(e)}
+                />{" "}
+                <i className="uil uil-envelope-alt email"> </i>{" "}
+              </div>{" "}
+              <div className="input_box">
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  value={password}
+                  name="password"
+                  onChange={(e) => onInputChange(e)}
+                />{" "}
+                <i className="uil uil-lock password"> </i>{" "}
+              </div>{" "}
+              <button className="button" type="submit">
+                Login Now{" "}
+              </button>{" "}
+              <div className="login_signup">
+                Forgot password ?{" "}
+                <a href="#signup" id="signup">
+                  click here{" "}
+                </a>{" "}
+              </div>{" "}
+              {errorMessage && (
+                <div className="error_message"> {errorMessage} </div>
+              )}{" "}
+            </form>{" "}
+          </div>{" "}
+          <div className="form signup_form">
+            <form action="#">
+              <h2> Forgot Password </h2>{" "}
+              <div className="input_box">
+                <input type="email" placeholder="Enter your email" required />
+                <i className="uil uil-envelope-alt email"> </i>{" "}
+              </div>{" "}
+              <button className="button"> Send Requisite </button>{" "}
+              <div className="login_signup">
+                Back to{" "}
+                <a href="#" id="login">
+                  Login{" "}
+                </a>{" "}
+              </div>{" "}
+            </form>{" "}
+          </div>{" "}
+        </div>{" "}
+      </section>{" "}
+    </div>
+  );
 }
 
 export default LoginForm;
