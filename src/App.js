@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import Scheduler from "./component/Scheduler";
+import SchedulerCasa from "./component/employeeSchedulerCasa";
+import SchedulerTetouan from "./component/employeeSchedulerTetouan";
+
 import Menu from "./component/Menu/Menu"; // updated path
 import Home from "./pages/Home";
 import Tet from "./pages/Tet";
@@ -8,7 +11,7 @@ import "@fortawesome/fontawesome-free/js/all.js";
 
 import LoginForm from "./components/loginform";
 
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Welcome from "./pages/Welcome";
 import Cookies from "js-cookie";
@@ -29,34 +32,34 @@ class App extends Component {
   state = {
     currentTimeFormatState: true,
     messages: [],
-    events: [],
+    reservations: [],
     loading: true,
   };
 
   componentDidMount() {
-    this.fetchEvents();
+    this.fetchReservations();
   }
 
-  fetchEvents = async () => {
-    const response = await fetch("http://localhost:9090/appointments");
-    const events = await response.json();
-    this.setState({ events });
+  fetchReservations = async () => {
+    const response = await fetch("http://localhost:9090/reservations");
+    const reservations = await response.json();
+    this.setState({ reservations, loading: false });
   };
 
-  // addMessage(message) {
-  //   const maxLogLength = 5;
-  //   const newMessage = { message };
-  //   const messages = [newMessage, ...this.state.messages];
+  addMessage(message) {
+    const maxLogLength = 5;
+    const newMessage = { message };
+    const messages = [newMessage, ...this.state.messages];
 
-  //   if (messages.length > maxLogLength) {
-  //     messages.length = maxLogLength;
-  //   }
-  //   this.setState({ messages });
-  // }
+    if (messages.length > maxLogLength) {
+      messages.length = maxLogLength;
+    }
+    this.setState({ messages });
+  }
 
-  logDataUpdate = (action, ev, id) => {
-    const text = ev && ev.text ? ` (${ev.text})` : "";
-    const message = `appointment ${action}: ${id} ${text}`;
+  logDataUpdate = (action, reservation, id) => {
+    const text = reservation && reservation.text ? ` (${reservation.text})` : "";
+    const message = `reservation ${action}: ${id} ${text}`;
     this.addMessage(message);
   };
 
@@ -117,12 +120,34 @@ class App extends Component {
               }
             />{" "}
             <Route
-              path="/EmployeeS"
+              path="/SchedulerCasablanca"
               element={
                 <Menu>
                   <div className="scheduler-container">
                     <Home />
-                  </div>{" "}
+                    <SchedulerCasa
+                      reservations={reservations}
+                      timeFormatState={currentTimeFormatState}
+                      onDataUpdated={this.logDataUpdate}
+                      onNewReservation={this.handleNewReservation}
+                    />
+                  </div>
+                </Menu>
+              }
+            />{" "}
+            <Route
+              path="/SchedulerTetouan"
+              element={
+                <Menu>
+                  <div className="scheduler-container">
+                    <Home />
+                    <SchedulerTetouan
+                      reservations={reservations}
+                      timeFormatState={currentTimeFormatState}
+                      onDataUpdated={this.logDataUpdate}
+                      onNewReservation={this.handleNewReservation}
+                    />
+                  </div>
                 </Menu>
               }
             />{" "}

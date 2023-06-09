@@ -5,8 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 function LoginForm() {
-  // const [login, setLogin] = useState("");
-  // const [password, setPassword] = useState("");
+
   const [errorMessage, setErrorMessage] = useState("");
   const [personne, setUser] = useState({
     email: "",
@@ -22,17 +21,7 @@ function LoginForm() {
     e.preventDefault();
     await axios
       .post("http://localhost:9090/login", personne)
-      //   .then((response) => {
-      //     if (response.ok) {
-      //       // Handle successful response
-      //       navigate("/Welcom");
-      //       //return response.json();
-      //     } else {
-      //       // Handle error response
-      //       // Login was unsuccessful, display an error message
-      //       setErrorMessage("Invalid email or password");
-      //     }
-      //   })
+
       .then((data) => {
         // Serialize the token object into a JSON string
         const personne = JSON.stringify(data.data);
@@ -48,48 +37,8 @@ function LoginForm() {
         setErrorMessage(error.response.data.message);
         console.error("Error:", error.message);
       });
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (data.success) {
-    //       // Login was successful, navigate to the welcome page
-    //       navigate("/scheduler", { state: { login } });
-    //     } else {
-    //       // Login was unsuccessful, display an error message
-    //       setErrorMessage("Invalid email or password");
-    //     }
-    //   });
   };
 
-  // const handleEmailChange = (event) => {
-  //     setLogin(event.target.value);
-  // };
-
-  // const handlePasswordChange = (event) => {
-  //     setPassword(event.target.value);
-  // };
-
-  // const handleSubmit = (event) => {
-  //     event.preventDefault();
-
-  //     // Send a POST request to the backend to check if the email and password combination exists
-  //     fetch("http://localhost:8083/login", {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ login, password }),
-  //     })
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //             if (data.success) {
-  //                 // Login was successful, navigate to the welcome page
-  //                 navigate("/scheduler", { state: { login } });
-  //             } else {
-  //                 // Login was unsuccessful, display an error message
-  //                 setErrorMessage("Invalid email or password");
-  //             }
-  //         });
-  // };
 
   React.useEffect(() => {
     const home = document.querySelector(".home");
