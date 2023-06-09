@@ -1,10 +1,8 @@
 import Cookies from "js-cookie";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 
 function Welcome() {
-  const { state } = useLocation();
-  const navigate = useNavigate();
+
 
   function logout() {
     Cookies.remove("token");
@@ -21,7 +19,7 @@ function Welcome() {
 
   return (
     <div>
-      <h1> Welcome, {tokenObject.firstName} </h1> <p> You have successfully logged in . </p>{" "}
+      <h1> Welcome, {tokenObject.email} </h1> <p> You have successfully logged in . </p>{" "}
       <button onClick={logout}> Logout </button>{" "}
     </div>
   );

@@ -71,12 +71,14 @@ class App extends Component {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route
+            {/* <Route
               path="/"
               element={
                 this.isLoggedIn() ? <Navigate to="/scheduler" /> : <LoginForm />
               }
-            />
+            /> */}
+            <Route path="/" element={<LoginForm />} />
+
             <Route
               path="Welcome"
               element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
