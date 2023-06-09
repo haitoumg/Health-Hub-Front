@@ -1,26 +1,19 @@
 import React, { Component } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; // Import 'Navigate' from react-router-dom
 import Scheduler from "./component/Scheduler";
 import SchedulerCasa from "./component/employeeSchedulerCasa";
 import SchedulerTetouan from "./component/employeeSchedulerTetouan";
-
-import Menu from "./component/Menu/Menu"; // updated path
+import Menu from "./component/Menu/Menu";
 import Home from "./pages/Home";
 import Tet from "./pages/Tet";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/js/all.js";
-
 import LoginForm from "./components/loginform";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Welcome from "./pages/Welcome";
 import Cookies from "js-cookie";
 
 class App extends Component {
-  // Check if the user is logged in
-
-  // Log out the user
-
   isLoggedIn() {
     return !!Cookies.get("token");
   }
@@ -70,7 +63,7 @@ class App extends Component {
   };
 
   render() {
-    const { loading, events, currentTimeFormatState } = this.state;
+    const { loading, events, currentTimeFormatState, reservations } = this.state; // Add 'reservations' to destructured state variables
     // if (loading) {
     //   return <div> Loading... </div>;
     // }
@@ -83,11 +76,11 @@ class App extends Component {
               element={
                 this.isLoggedIn() ? <Navigate to="/scheduler" /> : <LoginForm />
               }
-            />{" "}
+            />
             <Route
               path="Welcome"
               element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
-            />{" "}
+            />
             <Route
               path="/scheduler"
               element={
@@ -100,14 +93,14 @@ class App extends Component {
                         timeFormatState={currentTimeFormatState}
                         onDataUpdated={this.logDataUpdate}
                         onNewEvent={this.handleNewEvent}
-                      />{" "}
-                    </div>{" "}
+                      />
+                    </div>
                   </Menu>
                 ) : (
                   <Navigate to="/" />
                 )
               }
-            />{" "}
+            />
             <Route
               path="/Tet"
               element={
@@ -115,10 +108,10 @@ class App extends Component {
                   <div className="scheduler-container">
                     <Home />
                     <Tet />
-                  </div>{" "}
+                  </div>
                 </Menu>
               }
-            />{" "}
+            />
             <Route
               path="/SchedulerCasablanca"
               element={
@@ -134,7 +127,7 @@ class App extends Component {
                   </div>
                 </Menu>
               }
-            />{" "}
+            />
             <Route
               path="/SchedulerTetouan"
               element={
@@ -150,9 +143,9 @@ class App extends Component {
                   </div>
                 </Menu>
               }
-            />{" "}
-          </Routes>{" "}
-        </BrowserRouter>{" "}
+            />
+          </Routes>
+        </BrowserRouter>
       </div>
     );
   }
