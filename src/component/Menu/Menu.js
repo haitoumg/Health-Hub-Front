@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Navbar from "../Nabar/Navbar";
@@ -8,6 +9,13 @@ import "./Menu.style.css";
 
 
 const Menu = ({ children }) => {
+
+    const token = Cookies.get("token");
+    const tokenObject = JSON.parse(token);
+
+    console.log(tokenObject.role);
+    console.log(tokenObject.hubCity);
+
 
     const [open, setOpen] = useState('aberto');
 
@@ -22,67 +30,70 @@ const Menu = ({ children }) => {
                 <hr className="divisor" />
 
                 <ul className="conteudo-menu">
-                    {/* Menu sem Dropdow */}
-                    {/* <li className="item-menu">
-                        <NavLink className="link-menu" to="/">
-                            <i class="fa-solid fa-chart-simple"></i>
-                            <span>Appointment</span>
-                        </NavLink>
-                    </li> */}
+                    <ItemMenu title="Health Menu" icon="fa-solid fa-user">
+                        {tokenObject.role === "Doctor" && (
+                            <>
+                                <li>
+                                    <NavLink className="link-menu" to="/Scheduler">
+                                        <i className="fa-solid fa-hospital"></i>
+                                        <span>{tokenObject.hubCity}</span>
+                                    </NavLink>
+                                </li>
 
-                    {/* Menu com Dropdow */}
-                    {/* <ItemMenu title="List Employee" icon="fa-solid fa-user">
-                        <li>
-                            <NavLink className="link-menu" to="/usuarios/cadastrar">
-                                <i class="fa-solid fa-user-plus"></i>
-                                <span>All reservation</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink className="link-menu" to="/usuarios/listar">
-                                <i class="fa-solid fa-user-plus"></i>
-                                <span>Test</span>
-                            </NavLink>
-                        </li>
-                    </ItemMenu> */}
+                                <li>
+                                    <NavLink className="link-menu" to="/Appointment">
+                                        <i className="fa-solid fa-calendar-check"></i>
+                                        <span>My Appointment</span>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className="link-menu" to="/ListReservation">
+                                        <i className="fa-solid fa-calendar-check"></i>
+                                        <span>List Reservation</span>
+                                    </NavLink>
+                                </li>
+                            </>
 
-                    <ItemMenu title="Doctor Test" icon="fa-solid fa-user">
-                        <li>
-                            <NavLink className="link-menu" to="/scheduler">
-                                <i class="fa-solid fa-hospital"></i>
-                                <span>Tetouan</span>
-                            </NavLink>
-                        </li>
-                        
-                        <li>
-                            <NavLink className="link-menu" to="/EmployeeS">
-                                <i class="fa-solid fa-hospital"></i>
-                                <span>Casablanca</span>
-                            </NavLink>
-                        </li>
-                        
-                        <li>
-                            <NavLink className="link-menu" to="/Tet">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span>My Appointment</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink className="link-menu" to="/Welcome">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span> welcome</span>
-                            </NavLink>
-                        </li>
+                        )}
+
+                        {tokenObject.role === "Employee" && (
+                            <>
+                                <li>
+                                    <NavLink
+                                        className="link-menu"
+                                        to="/SchedulerTetouan"
+                                        onClick={() => (window.location.href = "/SchedulerTetouan")}
+                                    >
+                                        <i className="fa-solid fa-hospital"></i>
+                                        <span>Tetouan</span>
+                                    </NavLink>
+                                </li>
+
+                                <li>
+                                    <NavLink
+                                        className="link-menu"
+                                        to="/SchedulerCasablanca"
+                                        onClick={() => (window.location.href = "/SchedulerCasablanca")}
+                                    >
+                                        <i className="fa-solid fa-hospital"></i>
+                                        <span>Casablanca</span>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className="link-menu" to="/MyReservation">
+                                        <i className="fa-solid fa-calendar-check"></i>
+                                        <span>My Reservation</span>
+                                    </NavLink>
+                                </li>
+                            </>
+
+                        )}
                     </ItemMenu>
                 </ul>
             </div>
 
             <div className={`site ${open}`}>
-                <Navbar
-                    tipoMenu={open}
-                    handleMenu={handleMenu}
-                />
-
+                <Navbar tipoMenu={open} handleMenu={handleMenu} />
                 {children}
             </div>
         </>

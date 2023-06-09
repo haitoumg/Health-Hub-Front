@@ -147,7 +147,7 @@ export default class Scheduler extends Component {
     return (
       <div
         ref={(input) => { this.schedulerContainer = input }}
-        style={{ width: '100%', height: '106%' }}
+        style={{ width: '100%', height: '105.5%' }}
       ></div>
     ); 
   }

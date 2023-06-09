@@ -1,12 +1,10 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import "./loginform.css";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 function LoginForm() {
-  // const [login, setLogin] = useState("");
-  // const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [personne, setUser] = useState({
     email: "",
@@ -18,80 +16,29 @@ function LoginForm() {
   const onInputChange = (e) => {
     setUser({ ...personne, [e.target.name]: e.target.value });
   };
+
   const onSubmet = async (e) => {
     e.preventDefault();
-    await axios
-      .post("http://localhost:9090/login", personne)
-      //   .then((response) => {
-      //     if (response.ok) {
-      //       // Handle successful response
-      //       navigate("/Welcom");
-      //       //return response.json();
-      //     } else {
-      //       // Handle error response
-      //       // Login was unsuccessful, display an error message
-      //       setErrorMessage("Invalid email or password");
-      //     }
-      //   })
-      .then((data) => {
-        // Serialize the token object into a JSON string
-        const personne = JSON.stringify(data.data);
+    try {
+      const response = await axios.post("http://localhost:9090/login", personne);
+      const data = response.data;
 
-        // Set the cookie with a name 'token' and the serialized token object
-        Cookies.set("token", personne);
-        // Handle the data returned from the API
-        console.log("Response data:", data);
-        window.location.reload();
-      })
-      .catch((error) => {
-        // Handle any error that occurred during the request
-        setErrorMessage(error.response.data.message);
-        console.error("Error:", error.message);
-      });
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (data.success) {
-    //       // Login was successful, navigate to the welcome page
-    //       navigate("/scheduler", { state: { login } });
-    //     } else {
-    //       // Login was unsuccessful, display an error message
-    //       setErrorMessage("Invalid email or password");
-    //     }
-    //   });
+      const tokenObject = JSON.stringify(data);
+
+      Cookies.set("token", tokenObject);
+      console.log("Response data:", data);
+      window.location.reload();
+
+      console.log(tokenObject.role);
+      console.log(tokenObject.hubCity);
+
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
+      console.error("Error:", error.message);
+    }
   };
 
-  // const handleEmailChange = (event) => {
-  //     setLogin(event.target.value);
-  // };
-
-  // const handlePasswordChange = (event) => {
-  //     setPassword(event.target.value);
-  // };
-
-  // const handleSubmit = (event) => {
-  //     event.preventDefault();
-
-  //     // Send a POST request to the backend to check if the email and password combination exists
-  //     fetch("http://localhost:8083/login", {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ login, password }),
-  //     })
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //             if (data.success) {
-  //                 // Login was successful, navigate to the welcome page
-  //                 navigate("/scheduler", { state: { login } });
-  //             } else {
-  //                 // Login was unsuccessful, display an error message
-  //                 setErrorMessage("Invalid email or password");
-  //             }
-  //         });
-  // };
-
-  React.useEffect(() => {
+  useEffect(() => {
     const home = document.querySelector(".home");
     const formContainer = document.querySelector(".form_container");
     const signupBtn = document.querySelector("#signup");
@@ -108,6 +55,7 @@ function LoginForm() {
       formContainer.classList.remove("active");
     });
   }, []);
+
   return (
     <div className="cover">
       <head>
@@ -115,19 +63,19 @@ function LoginForm() {
           rel="stylesheet"
           href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
         />
-      </head>{" "}
+      </head>
       <header className="header">
         <nav className="nav">
           <a href="#" className="nav_logo">
             <img className="logo" src="/ntt.png" alt="Logo" />
-          </a>{" "}
-        </nav>{" "}
-      </header>{" "}
+          </a>
+        </nav>
+      </header>
       <section className="home">
         <div className="form_container">
           <div className="form login_form show">
             <form onSubmit={(e) => onSubmet(e)}>
-              <h2> Login </h2>{" "}
+              <h2>Login</h2>
               <div className="input_box">
                 <input
                   type="text"
@@ -136,9 +84,9 @@ function LoginForm() {
                   value={email}
                   name="email"
                   onChange={(e) => onInputChange(e)}
-                />{" "}
-                <i className="uil uil-envelope-alt email"> </i>{" "}
-              </div>{" "}
+                />
+                <i className="uil uil-envelope-alt email"></i>
+              </div>
               <div className="input_box">
                 <input
                   type="password"
@@ -147,41 +95,45 @@ function LoginForm() {
                   value={password}
                   name="password"
                   onChange={(e) => onInputChange(e)}
-                />{" "}
-                <i className="uil uil-lock password"> </i>{" "}
-              </div>{" "}
+                />
+                <i className="uil uil-lock password"></i>
+              </div>
               <button className="button" type="submit">
-                Login Now{" "}
-              </button>{" "}
+                Login Now
+              </button>
               <div className="login_signup">
-                Forgot password ?{" "}
+                Forgot password?
                 <a href="#signup" id="signup">
-                  click here{" "}
-                </a>{" "}
-              </div>{" "}
+                  click here
+                </a>
+              </div>
               {errorMessage && (
-                <div className="error_message"> {errorMessage} </div>
-              )}{" "}
-            </form>{" "}
-          </div>{" "}
+                <div className="error_message">{errorMessage}</div>
+              )}
+            </form>
+          </div>
           <div className="form signup_form">
             <form action="#">
-              <h2> Forgot Password </h2>{" "}
+              <h2>Forgot Password</h2>
               <div className="input_box">
-                <input type="email" placeholder="Enter your email" required />
-                <i className="uil uil-envelope-alt email"> </i>{" "}
-              </div>{" "}
-              <button className="button"> Send Requisite </button>{" "}
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                />
+                <i className="uil uil-envelope-alt email"></i>
+              </div>
+              <button className="button">Send Requisite</button>
               <div className="login_signup">
-                Back to{" "}
+                Back to
                 <a href="#" id="login">
-                  Login{" "}
-                </a>{" "}
-              </div>{" "}
-            </form>{" "}
-          </div>{" "}
-        </div>{" "}
-      </section>{" "}
+                  Login
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

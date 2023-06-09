@@ -1,22 +1,19 @@
 import React, { Component } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; // Import 'Navigate' from react-router-dom
 import Scheduler from "./component/Scheduler";
-import Menu from "./component/Menu/Menu"; // updated path
+import SchedulerCasa from "./component/employeeSchedulerCasa";
+import SchedulerTetouan from "./component/employeeSchedulerTetouan";
+import Menu from "./component/Menu/Menu";
 import Home from "./pages/Home";
 import Tet from "./pages/Tet";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/js/all.js";
-
 import LoginForm from "./components/loginform";
-
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
 import Welcome from "./pages/Welcome";
 import Cookies from "js-cookie";
 
 class App extends Component {
-  // Check if the user is logged in
-  // Log out the user
-
   isLoggedIn() {
     return !!Cookies.get("token");
   }
@@ -28,18 +25,18 @@ class App extends Component {
   state = {
     currentTimeFormatState: true,
     messages: [],
-    events: [],
+    reservations: [],
     loading: true,
   };
 
   componentDidMount() {
-    this.fetchEvents();
+    this.fetchReservations();
   }
 
-  fetchEvents = async () => {
-    const response = await fetch("http://localhost:9090/appointments");
-    const events = await response.json();
-    this.setState({ events });
+  fetchReservations = async () => {
+    const response = await fetch("http://localhost:9090/reservations");
+    const reservations = await response.json();
+    this.setState({ reservations, loading: false });
   };
 
   addMessage(message) {
@@ -53,9 +50,9 @@ class App extends Component {
     this.setState({ messages });
   }
 
-  logDataUpdate = (action, ev, id) => {
-    const text = ev && ev.text ? ` (${ev.text})` : "";
-    const message = `appointment ${action}: ${id} ${text}`;
+  logDataUpdate = (action, reservation, id) => {
+    const text = reservation && reservation.text ? ` (${reservation.text})` : "";
+    const message = `reservation ${action}: ${id} ${text}`;
     this.addMessage(message);
   };
 
@@ -66,7 +63,7 @@ class App extends Component {
   };
 
   render() {
-    const { loading, events, currentTimeFormatState } = this.state;
+    const { loading, events, currentTimeFormatState, reservations } = this.state; // Add 'reservations' to destructured state variables
     // if (loading) {
     //   return <div> Loading... </div>;
     // }
@@ -78,16 +75,18 @@ class App extends Component {
         
         <BrowserRouter>
           <Routes>
-            <Route
+            {/* <Route
               path="/"
               element={
                 this.isLoggedIn() ? <Navigate to="/scheduler" /> : <LoginForm />
               }
-            />{" "}
+            /> */}
+            <Route path="/" element={<LoginForm />} />
+
             <Route
               path="Welcome"
-              element={ this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
-            />{" "}
+              element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
+            />
             <Route
               path="/scheduler"
               element={
@@ -100,14 +99,14 @@ class App extends Component {
                         timeFormatState={currentTimeFormatState}
                         onDataUpdated={this.logDataUpdate}
                         onNewEvent={this.handleNewEvent}
-                      />{" "}
-                    </div>{" "}
+                      />
+                    </div>
                   </Menu>
                 ) : (
                   <Navigate to="/" />
                 )
               }
-            />{" "}
+            />
             <Route
               path="/Tet"
               element={
@@ -115,25 +114,48 @@ class App extends Component {
                   <div className="scheduler-container">
                     <Home />
                     <Tet />
-                  </div>{" "}
+                  </div>
                 </Menu>
               }
-            />{" "}
+            />
             <Route
-              path="/EmployeeS"
+              path="/SchedulerCasablanca"
               element={
                 <Menu>
                   <div className="scheduler-container">
                     <Home />
-                  </div>{" "}
+                    <SchedulerCasa
+                      reservations={reservations}
+                      timeFormatState={currentTimeFormatState}
+                      onDataUpdated={this.logDataUpdate}
+                      onNewReservation={this.handleNewReservation}
+                    />
+                  </div>
                 </Menu>
               }
-            />{" "}
-          </Routes>{" "}
-        </BrowserRouter> }
+            />
+            <Route
+              path="/SchedulerTetouan"
+              element={
+                <Menu>
+                  <div className="scheduler-container">
+                    <Home />
+                    <SchedulerTetouan
+                      reservations={reservations}
+                      timeFormatState={currentTimeFormatState}
+                      onDataUpdated={this.logDataUpdate}
+                      onNewReservation={this.handleNewReservation}
+                    />
+                  </div>
+                </Menu>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+  }
       </div>
     );
   }
-}
+
 
 export default App;
