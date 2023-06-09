@@ -10,7 +10,8 @@ function Welcome() {
     Cookies.remove("token");
     window.location.reload();
   }
-  const token = Cookies.get("token");
+  // const token = Cookies.get("token");
+  const token ="1";
 
   // Parse the token value into an object
   const tokenObject = JSON.parse(token);

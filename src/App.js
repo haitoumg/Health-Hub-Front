@@ -15,7 +15,6 @@ import Cookies from "js-cookie";
 
 class App extends Component {
   // Check if the user is logged in
-
   // Log out the user
 
   isLoggedIn() {
@@ -43,16 +42,16 @@ class App extends Component {
     this.setState({ events });
   };
 
-  // addMessage(message) {
-  //   const maxLogLength = 5;
-  //   const newMessage = { message };
-  //   const messages = [newMessage, ...this.state.messages];
+  addMessage(message) {
+    const maxLogLength = 5;
+    const newMessage = { message };
+    const messages = [newMessage, ...this.state.messages];
 
-  //   if (messages.length > maxLogLength) {
-  //     messages.length = maxLogLength;
-  //   }
-  //   this.setState({ messages });
-  // }
+    if (messages.length > maxLogLength) {
+      messages.length = maxLogLength;
+    }
+    this.setState({ messages });
+  }
 
   logDataUpdate = (action, ev, id) => {
     const text = ev && ev.text ? ` (${ev.text})` : "";
@@ -72,7 +71,11 @@ class App extends Component {
     //   return <div> Loading... </div>;
     // }
     return (
+     
       <div>
+      
+        {
+        
         <BrowserRouter>
           <Routes>
             <Route
@@ -83,12 +86,12 @@ class App extends Component {
             />{" "}
             <Route
               path="Welcome"
-              element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
+              element={ this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
             />{" "}
             <Route
               path="/scheduler"
               element={
-                this.isLoggedIn() ? (
+                true ? (
                   <Menu>
                     <div className="scheduler-container">
                       <Home />
@@ -127,7 +130,7 @@ class App extends Component {
               }
             />{" "}
           </Routes>{" "}
-        </BrowserRouter>{" "}
+        </BrowserRouter> }
       </div>
     );
   }

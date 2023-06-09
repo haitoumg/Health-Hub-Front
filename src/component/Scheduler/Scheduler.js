@@ -31,7 +31,7 @@ export default class Scheduler extends Component {
       
 
       // Save the new event to the backend
-      axios.post('http://localhost:8083/Event/save', ev)
+      axios.post('http://localhost:9090/appointment', ev)
         .then(response => {
           console.log('Event saved:', response.data);
         })
@@ -46,7 +46,7 @@ export default class Scheduler extends Component {
       }
 
       // Update the changed event in the backend
-      axios.put(`http://localhost:8083/Event/${id}`, ev)
+      axios.put(`http://localhost:9090/appointment/${id}`, ev)
         .then(response => {
           console.log('Event updated:', response.data);
         })
@@ -123,7 +123,7 @@ export default class Scheduler extends Component {
   
   
   fetchEvents = async () => {
-    const response = await fetch('http://localhost:8083/Events');
+    const response = await fetch('http://localhost:9090/appointments');
     const events = await response.json();
     scheduler.parse(events);
   }
@@ -149,6 +149,6 @@ export default class Scheduler extends Component {
         ref={(input) => { this.schedulerContainer = input }}
         style={{ width: '100%', height: '106%' }}
       ></div>
-    );
+    ); 
   }
 }
