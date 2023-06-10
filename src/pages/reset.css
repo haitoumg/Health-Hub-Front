@@ -1,0 +1,28 @@
+
+
+.card {
+    margin-top: 20rem;
+    width: 41rem;
+    height: 30rem;
+    text-align: center;
+    padding-left: 5rem;
+    padding-top: 2rem;
+}
+
+.card-body {
+    justify-content: center;
+    border-radius: 5rem;
+    
+    width: 30rem;
+}
+
+.mb-3 input {
+    justify-content: center;
+    align-items: center;
+    /* text-align: center; */
+}
+
+.btn {
+    width: 100rem;
+    bo
+}

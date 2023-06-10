@@ -1,17 +1,23 @@
-import React, { Component } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; // Import 'Navigate' from react-router-dom
+import React, { Component, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Scheduler from "./component/Scheduler";
 import SchedulerCasa from "./component/employeeSchedulerCasa";
 import SchedulerTetouan from "./component/employeeSchedulerTetouan";
 import Menu from "./component/Menu/Menu";
 import Home from "./pages/Home";
-import Tet from "./pages/Tet";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/js/all.js";
 import LoginForm from "./components/loginform";
 import "./App.css";
 import Welcome from "./pages/Welcome";
 import Cookies from "js-cookie";
+
+import ChangePassword from "./components/ChangePassword";
+import MyReservation from "./pages/MyReservation";
+import Appointment from "./pages/Appointment";
+import ResetPasswordForm from "./pages/ResetPasswordForm";
+import ListReservation from "./pages/ListReservation";
+
 
 class App extends Component {
   isLoggedIn() {
@@ -25,7 +31,7 @@ class App extends Component {
   state = {
     currentTimeFormatState: true,
     messages: [],
-    reservations: [],
+    events: [],
     loading: true,
   };
 
@@ -35,8 +41,8 @@ class App extends Component {
 
   fetchReservations = async () => {
     const response = await fetch("http://localhost:9090/reservations");
-    const reservations = await response.json();
-    this.setState({ reservations, loading: false });
+    const events = await response.json();
+    this.setState({ events, loading: false });
   };
 
   addMessage(message) {
@@ -62,11 +68,26 @@ class App extends Component {
     });
   };
 
+  handleNewEvent = (newEvent) => {
+    // Handle adding a new event
+    // Update the state with the new event
+    const updatedEvents = [...this.state.events, newEvent];
+    this.setState({ events: updatedEvents });
+  };
+
+  handleDeleteEvent = (eventId) => {
+    // Handle deleting an event
+    // Update the state by filtering out the deleted event
+    const updatedEvents = this.state.events.filter((event) => event.id !== eventId);
+    this.setState({ events: updatedEvents });
+  };
+
   render() {
-    const { loading, events, currentTimeFormatState, reservations } = this.state; // Add 'reservations' to destructured state variables
-    // if (loading) {
-    //   return <div> Loading... </div>;
-    // }
+    const { loading, currentTimeFormatState, events } = this.state;
+
+    const token = Cookies.get("token");
+    const tokenObject = token ? JSON.parse(token) : null;
+
     return (
      
       <div>
@@ -75,17 +96,71 @@ class App extends Component {
         
         <BrowserRouter>
           <Routes>
-            {/* <Route
+            <Route
               path="/"
               element={
-                this.isLoggedIn() ? <Navigate to="/scheduler" /> : <LoginForm />
+                this.isLoggedIn() ? (
+                  tokenObject.role === "Doctor" ? (
+                    <Navigate to="/scheduler" />
+                  ) : tokenObject.role === "Employee" && tokenObject.hubCity === "Casablanca" ? (
+                    <Navigate to="/schedulerCasablanca" />
+                  ) : tokenObject.role === "Employee" && tokenObject.hubCity === "Tetouan" ? (
+                    <Navigate to="/schedulerTetouan" />
+                  ) : (
+                    <LoginForm />
+                  )
+                ) : (
+                  <LoginForm />
+                )
               }
-            /> */}
-            <Route path="/" element={<LoginForm />} />
-
+            />
+            <Route path="/ResetPasswordForm/:resetToken" element={<ResetPasswordForm />} />
+            <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route
-              path="Welcome"
+              path="/Welcome"
               element={this.isLoggedIn() ? <Welcome /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/SchedulerTetouan"
+              element={
+                this.isLoggedIn() ? (
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <SchedulerTetouan
+                        events={events}
+                        timeFormatState={currentTimeFormatState}
+                        onDataUpdated={this.logDataUpdate}
+                        onNewEvent={this.handleNewEvent}
+                        onDeleteEvent={this.handleDeleteEvent}
+                      />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/SchedulerCasablanca"
+              element={
+                this.isLoggedIn() ? (
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <SchedulerCasa
+                        events={events}
+                        timeFormatState={currentTimeFormatState}
+                        onDataUpdated={this.logDataUpdate}
+                        onNewEvent={this.handleNewEvent}
+                        onDeleteEvent={this.handleDeleteEvent}
+                      />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
             />
             <Route
               path="/scheduler"
@@ -99,6 +174,7 @@ class App extends Component {
                         timeFormatState={currentTimeFormatState}
                         onDataUpdated={this.logDataUpdate}
                         onNewEvent={this.handleNewEvent}
+                        onDeleteEvent={this.handleDeleteEvent}
                       />
                     </div>
                   </Menu>
@@ -108,46 +184,51 @@ class App extends Component {
               }
             />
             <Route
-              path="/Tet"
+              path="/MyReservation"
               element={
-                <Menu>
-                  <div className="scheduler-container">
-                    <Home />
-                    <Tet />
-                  </div>
-                </Menu>
+                this.isLoggedIn() ? (
+
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <MyReservation />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />
             <Route
-              path="/SchedulerCasablanca"
+              path="/Appointment"
               element={
-                <Menu>
-                  <div className="scheduler-container">
-                    <Home />
-                    <SchedulerCasa
-                      reservations={reservations}
-                      timeFormatState={currentTimeFormatState}
-                      onDataUpdated={this.logDataUpdate}
-                      onNewReservation={this.handleNewReservation}
-                    />
-                  </div>
-                </Menu>
+                this.isLoggedIn() ? (
+
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <Appointment />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />
             <Route
-              path="/SchedulerTetouan"
+              path="/ListReservation"
               element={
-                <Menu>
-                  <div className="scheduler-container">
-                    <Home />
-                    <SchedulerTetouan
-                      reservations={reservations}
-                      timeFormatState={currentTimeFormatState}
-                      onDataUpdated={this.logDataUpdate}
-                      onNewReservation={this.handleNewReservation}
-                    />
-                  </div>
-                </Menu>
+                this.isLoggedIn() ? (
+
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <ListReservation />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />
           </Routes>

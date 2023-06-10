@@ -1,0 +1,199 @@
+.loading-popup p {
+    color: #fff;
+    font-size: 18px;
+    margin-top: 16px;
+    justify-content: center;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+#container {
+    width: 1000px !important;
+}
+
+p {
+    font-size: 12px;
+}
+
+h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+.bg-primary {
+    background-color: #01d28e !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+
+}
+
+.form-control {
+    height: 36px;
+    background: #fff;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    border-radius: 2px;
+    box-shadow: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.contactForm .form-control {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+
+.form-control:focus,
+.form-control:active {
+    border-color: #01d28e !important;
+}
+
+.form-label {
+    color: #000;
+    /* text-transform: uppercase; */
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.btn.btn-primary {
+    background: #01d28e !important;
+    border-color: #01d28e !important;
+    color: #fff;
+    width: 100px;
+    border-radius: 0 !important;
+
+}
+
+.btn.btn-primary:hover {
+    background-color: #28a745 !important;
+}
+
+.bi {
+    font-size: 50px;
+}
+
+@media only screen and (max-width: 600px) {
+    #container {
+        width: 100% !important;
+        padding-bottom: 207px !important;
+    }
+}
+
+
+
+/* /css contact form/ */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+#container {
+    width: 1000px !important;
+    border-radius: 25px;
+    margin-top: 13rem;
+}
+
+p {
+    font-size: 18px;
+}
+
+h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+.bg-primary {
+    background-color: #13274F !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+
+}
+
+.nttdata img {
+    margin-left: 7px;
+    margin-top: 10px;
+
+}
+
+/* --------------------------- */
+
+.col-md-8 img {
+
+    margin-top: -100px;
+    margin-left: 6rem;
+    width: 20rem;
+    height: 20rem;
+    margin-bottom: -8rem;
+
+}
+
+/* --------------------------- */
+
+.col-md-4 {
+    background-color: #13274F !important;
+    border-radius: 25px 0 0 25px;
+}
+
+.form-control {
+    height: 36px;
+
+    background: #fff;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    border-radius: 2px;
+    box-shadow: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.contactForm .form-control {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+
+.form-control:focus,
+.form-control:active {
+    border-color: #1F75FE !important;
+}
+
+.form-label {
+    color: #000;
+    /* text-transform: uppercase; */
+    font-size: 15px;
+    /* font-weight: 700; */
+    margin-bottom: 0.5rem;
+}
+
+input {
+    padding-left: 5rem;
+}
+
+.btn.btn-primary {
+    background: #13274F !important;
+    border-color: #13274F !important;
+    color: #fff;
+    width: 100px;
+    border-radius: 10px !important;
+
+}
+
+.btn.btn-primary:hover {
+    background-color: #1F75FE !important;
+}
+
+.bi {
+    font-size: 50px;
+}
+
+@media only screen and (max-width: 600px) {
+    #container {
+        width: 100% !important;
+        padding-bottom: 207px !important;
+    }
+}

@@ -1,26 +1,30 @@
-import Cookies from "js-cookie";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Navbar from "../Nabar/Navbar";
-
 import ItemMenu from "./ItemMenu";
 import "./Menu.style.css";
-
+import Cookies from "js-cookie";
 
 
 const Menu = ({ children }) => {
+    const [tokenObject, setTokenObject] = useState(null);
 
-    const token = Cookies.get("token");
-    const tokenObject = JSON.parse(token);
+    useEffect(() => {
+        const token = Cookies.get("token");
+        if (token) {
+            try {
+                const parsedTokenObject = JSON.parse(token);
+                setTokenObject(parsedTokenObject);
+            } catch (error) {
+                console.error("Error parsing token:", error);
+            }
+        }
+    }, []);
 
-    console.log(tokenObject.role);
-    console.log(tokenObject.hubCity);
-
-
-    const [open, setOpen] = useState('aberto');
+    const [open, setOpen] = useState("aberto");
 
     const handleMenu = () => {
-        (open === 'aberto') ? setOpen('fechado') : setOpen('aberto');
+        setOpen((prevState) => (prevState === "aberto" ? "fechado" : "aberto"));
     };
 
     return (
@@ -30,65 +34,61 @@ const Menu = ({ children }) => {
                 <hr className="divisor" />
 
                 <ul className="conteudo-menu">
-                    <ItemMenu title="Health Menu" icon="fa-solid fa-user">
-                        {tokenObject.role === "Doctor" && (
-                            <>
-                                <li>
-                                    <NavLink className="link-menu" to="/Scheduler">
-                                        <i className="fa-solid fa-hospital"></i>
-                                        <span>{tokenObject.hubCity}</span>
-                                    </NavLink>
-                                </li>
+                    {tokenObject?.role === "Doctor" && (
+                        <ItemMenu title="Health Menu" icon="fa-solid fa-user">
+                            <li>
+                                <NavLink className="link-menu" to="/Scheduler">
+                                    <i className="fa-solid fa-hospital"></i>
+                                    <span>{tokenObject.hubCity}</span>
+                                </NavLink>
+                            </li>
 
-                                <li>
-                                    <NavLink className="link-menu" to="/Appointment">
-                                        <i className="fa-solid fa-calendar-check"></i>
-                                        <span>My Appointment</span>
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <NavLink className="link-menu" to="/ListReservation">
-                                        <i className="fa-solid fa-calendar-check"></i>
-                                        <span>List Reservation</span>
-                                    </NavLink>
-                                </li>
-                            </>
+                            <li>
+                                <NavLink className="link-menu" to="/Appointment">
+                                    <i className="fa-solid fa-calendar-check"></i>
+                                    <span>My Appointment</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink className="link-menu" to="/ListReservation">
+                                    <i className="fa-solid fa-calendar-check"></i>
+                                    <span>List Reservation</span>
+                                </NavLink>
+                            </li>
+                        </ItemMenu>
+                    )}
 
-                        )}
+                    {tokenObject?.role === "Employee" && (
+                        <ItemMenu title="Health Menu" icon="fa-solid fa-user">
+                            <li>
+                                <NavLink
+                                    className="link-menu"
+                                    to="/SchedulerTetouan"
+                                    onClick={() => (window.location.href = "/SchedulerTetouan")}
+                                >
+                                    <i className="fa-solid fa-hospital"></i>
+                                    <span>Tetouan</span>
+                                </NavLink>
+                            </li>
 
-                        {tokenObject.role === "Employee" && (
-                            <>
-                                <li>
-                                    <NavLink
-                                        className="link-menu"
-                                        to="/SchedulerTetouan"
-                                        onClick={() => (window.location.href = "/SchedulerTetouan")}
-                                    >
-                                        <i className="fa-solid fa-hospital"></i>
-                                        <span>Tetouan</span>
-                                    </NavLink>
-                                </li>
-
-                                <li>
-                                    <NavLink
-                                        className="link-menu"
-                                        to="/SchedulerCasablanca"
-                                        onClick={() => (window.location.href = "/SchedulerCasablanca")}
-                                    >
-                                        <i className="fa-solid fa-hospital"></i>
-                                        <span>Casablanca</span>
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <NavLink className="link-menu" to="/MyReservation">
-                                        <i className="fa-solid fa-calendar-check"></i>
-                                        <span>My Reservation</span>
-                                    </NavLink>
-                                </li>
-                            </>
-
-                        )}
-                    </ItemMenu>
+                            <li>
+                                <NavLink
+                                    className="link-menu"
+                                    to="/SchedulerCasablanca"
+                                    onClick={() => (window.location.href = "/SchedulerCasablanca")}
+                                >
+                                    <i className="fa-solid fa-hospital"></i>
+                                    <span>Casablanca</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink className="link-menu" to="/MyReservation">
+                                    <i className="fa-solid fa-calendar-check"></i>
+                                    <span>My Reservation</span>
+                                </NavLink>
+                            </li>
+                        </ItemMenu>
+                    )}
                 </ul>
             </div>
 
