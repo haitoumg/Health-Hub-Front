@@ -1,6 +1,6 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./loginform.css";
-import { BrowserRouter, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -28,9 +28,6 @@ function LoginForm() {
       Cookies.set("token", tokenObject);
       console.log("Response data:", data);
       window.location.reload();
-
-      console.log(tokenObject.role);
-      console.log(tokenObject.hubCity);
 
     } catch (error) {
       setErrorMessage(error.response.data.message);
