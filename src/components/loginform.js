@@ -24,7 +24,7 @@ function LoginForm() {
       const data = response.data;
 
       const tokenObject = JSON.stringify(data);
-
+      
       Cookies.set("token", tokenObject);
       console.log("Response data:", data);
       window.location.reload();

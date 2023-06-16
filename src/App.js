@@ -15,13 +15,19 @@ import Cookies from "js-cookie";
 import ChangePassword from "./components/ChangePassword";
 import MyReservation from "./pages/MyReservation";
 import Appointment from "./pages/Appointment";
-import ResetPasswordForm from "./pages/ResetPasswordForm";
+// import ResetPasswordForm from "./pages/ResetPasswordForm";
 import ListReservation from "./pages/ListReservation";
 
 
 class App extends Component {
   isLoggedIn() {
+    if(!!Cookies.get("token")=== true){
+      console.log("yeah logged in");
+    }else {
+      console.log("not logged in");
+    }
     return !!Cookies.get("token");
+
   }
 
   logout() {
@@ -40,7 +46,7 @@ class App extends Component {
   }
 
   fetchReservations = async () => {
-    const response = await fetch("http://localhost:9090/reservations");
+    const response = await fetch("http://localhost:9090/calendarsByHub?city="+Cookies.get("token").hubCity);
     const events = await response.json();
     this.setState({ events, loading: false });
   };
@@ -100,6 +106,7 @@ class App extends Component {
               path="/"
               element={
                 this.isLoggedIn() ? (
+                  
                   tokenObject.role === "Doctor" ? (
                     <Navigate to="/scheduler" />
                   ) : tokenObject.role === "Employee" && tokenObject.hubCity === "Casablanca" ? (
@@ -114,7 +121,26 @@ class App extends Component {
                 )
               }
             />
-            <Route path="/ResetPasswordForm/:resetToken" element={<ResetPasswordForm />} />
+            <Route
+              path="/"
+              element={
+                this.isLoggedIn() ? (
+                  tokenObject.role === "Employee" ? (
+                    <Navigate to="/scheduler" />
+                  ) : tokenObject.role === "Employee" && tokenObject.hubCity === "Casablanca" ? (
+                    <Navigate to="/schedulerCasablanca" />
+                  ) : tokenObject.role === "Employee" && tokenObject.hubCity === "Tetouan" ? (
+                    <Navigate to="/schedulerTetouan" />
+                  ) : (
+                    <LoginForm />
+                  )
+                ) : (
+                  <LoginForm />
+                )
+              }
+            />
+
+            {/* <Route path="/ResetPasswordForm/:resetToken" element={<ResetPasswordForm />} /> */}
             <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route
               path="/Welcome"
@@ -165,7 +191,7 @@ class App extends Component {
             <Route
               path="/scheduler"
               element={
-                true ? (
+                this.isLoggedIn() ? (
                   <Menu>
                     <div className="scheduler-container">
                       <Home />
