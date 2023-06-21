@@ -4,6 +4,7 @@ import "dhtmlx-scheduler/codebase/dhtmlxscheduler_material.css";
 import axios from "axios";
 import "./Scheduler.css";
 import Cookies from "js-cookie";
+import { scheduler } from "dhtmlx-scheduler";
 export default class Scheduler extends Component {
   state = {
     userId: null,
@@ -85,7 +86,33 @@ export default class Scheduler extends Component {
   //   }
   // };
 
-  fetchData = async (scheduler) => {
+  fetchData=async (scheduler)=>{
+    scheduler.clearAll();
+    const calendarsInfos=this.fetchCalendarsInfos();
+    calendarsInfos.then((calendarsInfos)=>{
+      console.log("show after modification");
+      console.log(calendarsInfos);
+      console.log(scheduler);
+      let calendars=[];
+      for (let calendarInfos of calendarsInfos) {
+        calendars.push({
+          text: (calendarInfos.employeeLastName!=null && calendarInfos.employeeFirstName!=null)?calendarInfos.employeeLastName+" "+calendarInfos.employeeFirstName:"",
+          start_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.startTime,
+          end_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.endTime,
+          color: (calendarInfos.booked == true)?"green":"blue",
+          calendarId: calendarInfos.calendarId
+        });
+    }
+
+      scheduler.parse(calendars,"json");
+    }).catch ((error)=>{
+
+      console.error("Error in nex fetchData:", error);
+     
+    }
+      );
+  }
+ /* fetchData = async (scheduler) => {
     try {
      
       //   const [availableAppointments, reservations] = await Promise.all([
@@ -160,7 +187,18 @@ export default class Scheduler extends Component {
   // padZero(nombre) {
   //   return nombre < 10 ? "0" + nombre : nombre;
   // }
-  
+  */
+  fetchCalendarsInfos=async ()=> {
+    let userData = JSON.parse(Cookies.get("token"));
+    console.log(userData);
+    console.log("uuuuser id: "+userData.personneId);
+    const response = await axios.post(
+      `http://localhost:9090/calendarsInfosByDoctor`, {"id": userData.personneId}
+    );
+    const allcalendarsInfos = response.data;
+    return allcalendarsInfos;
+  }
+
   fetchAllReservations = async () => {
     try {
       let userData = JSON.parse(Cookies.get("token"));
@@ -285,12 +323,12 @@ export default class Scheduler extends Component {
           const schedulerId = schedulerResponse.data.calendarId;
           console.log("schedulerResponse"+schedulerResponse.data);
           // Instead of creating a reservation, update the event directly in the scheduler
-          scheduler.getEvent(id).schedulerId = schedulerId;
+          // scheduler.getEvent(id).schedulerId = schedulerId;
   
           console.log('Appointment added:', schedulerResponse.data);
   
           // Refresh the display of the modified event
-          scheduler.updateEvent(id);
+          // scheduler.updateEvent(id);
         } catch (error) {
           console.error('Error adding appointment:', error);
         }
@@ -301,9 +339,20 @@ export default class Scheduler extends Component {
     });
   
     // Rest of the code...
-  
-  
-
+    scheduler.attachEvent('onEventDeleted', async (id, ev) => {
+      if (onDataUpdated) {
+        console.log("in deleting");
+        onDataUpdated('delete', ev, id);
+      }
+      console.log("in deleting 2");
+      console.log(ev);
+     axios
+      .delete(`http://localhost:9090/calendar/${ev.calendarId}`).then((response) => {
+        console.log('Event updated:', response.data);
+        // Refresh the scheduler to display the updated reservations
+        this.fetchData(scheduler);
+      })
+  });
     scheduler.attachEvent('onEventChanged', async (id, ev) => {
       if (onDataUpdated) {
         onDataUpdated('update', ev, id);
