@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Cookies from "js-cookie";
 
 export default function Reservations() {
     const [reservations, setReservations] = useState([]);
@@ -8,27 +9,29 @@ export default function Reservations() {
 
     useEffect(() => {
         const fetchUserInformation = async () => {
-            const login = sessionStorage.getItem('login');
+            const login = JSON.parse(Cookies.get("token")).email;
             if (login) {
-                try {
-                    const response = await fetch(`http://localhost:9090/user?login=${login}`);
-                    if (response.ok) {
-                        const user = await response.json();
-                        const hubName = user.hub.hubName;
-                        loadReservations(hubName);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
+             
+                    // const response = await fetch(`http://localhost:9090/user?login=${login}`);
+                    
+                        const user = JSON.parse(Cookies.get("token"));
+                        const hubName = user.hubName;
+                        loadReservations();
+                   
+                // } catch (error) {
+                //     console.error('Error:', error);
+                // }
             }
         };
 
         fetchUserInformation();
     }, []);
+    // loadReservations();
 
-    const loadReservations = async (hubName) => {
+    const loadReservations = async () => {
         try {
-            const response = await axios.get(`http://localhost:9090/findAllReservation_in_whatHubReservation/hub`);
+            let userData = JSON.parse(Cookies.get("token"));
+            const response = await axios.post(`http://localhost:9090/appointmentsByDoctor`, {"id": userData.personneId});
             const sortedReservations = response.data.sort((a, b) => b.reservationId - a.reservationId);
             setReservations(sortedReservations);
         } catch (error) {
@@ -68,10 +71,10 @@ export default function Reservations() {
                             {currentItems.map((reservation, index) => (
                                 <tr key={reservation.reservationId}>
                                     <th scope="row">{reservation.reservationId}</th>
-                                    <td>{reservation.user.firstName} {reservation.user.lastName}</td>
-                                    <td>{reservation.scheduler.startDate}</td>
-                                    <td>{reservation.scheduler.endDate}</td>
-                                    <td>{reservation.isCancelled === 0 ? 'No' : 'Yes'}</td>
+                                    <td>{reservation.fullName}</td>
+                                    <td>{reservation.startDate}</td>
+                                    <td>{reservation.endDate}</td>
+                                    <td>{reservation.cancelled === false ? 'No' : 'Yes, by '+reservation.cancelledBy}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -27,14 +27,15 @@ export default function Appointment() {
             navigate('/');
         } else {
             // Retrieve the logged-in user's login from session storage
-            const login = sessionStorage.getItem('login');
+            const login =  JSON.parse(Cookies.get("token")).email;
             setLoggedInUserLogin(login);
         }
     };
 
     const loadSchedulers = async () => {
         try {
-            const response = await axios.get(`http://localhost:9090/scheduler?login=${loggedInUserLogin}`);
+            const userData=  JSON.parse(Cookies.get("token"));
+            const response = await axios.post(`http://localhost:9090/calendarsAvailableByDoctor`, {"id": userData.personneId});
             const sortedSchedulers = response.data.sort((a, b) => b.schedulerId - a.schedulerId);
             setSchedulers(sortedSchedulers);
         } catch (error) {
@@ -42,9 +43,20 @@ export default function Appointment() {
         }
     };
 
-    const cancelAppointment = async (schedulerId) => {
-        // Implement cancelAppointment logic here
-    };
+    const cancelAppointment = async (calendarId) => {
+        try {
+            console.log("calendarId : "+calendarId)
+            const response = await axios.delete("http://localhost:9090/calendar/"+calendarId);
+            console.log(response);
+            if (response.status == 200) {
+               console.log("deleted normally");
+               loadSchedulers();
+            } else {
+                throw new Error('Failed to cancel reservation');
+            }
+        } catch (error) {
+            console.error('Error canceling reservation:', error);
+        }    };
 
     // Calculate the indexes of the items to display on the current page
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -69,21 +81,19 @@ export default function Appointment() {
                                 <th scope="col">#</th>
                                 <th scope="col">Start Date</th>
                                 <th scope="col">End Date</th>
-                                <th scope="col">Text</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {currentItems.map((scheduler, index) => (
-                                <tr key={scheduler.schedulerId}>
+                                <tr key={scheduler.calendarId}>
                                     <th scope="row">{getActualIndex(index)}</th>
                                     <td>{scheduler.startDate}</td>
                                     <td>{scheduler.endDate}</td>
-                                    <td>{scheduler.text}</td>
                                     <td>
                                         <button
                                             className="btn btn-danger"
-                                            onClick={() => cancelAppointment(scheduler.schedulerId)}
+                                            onClick={() => cancelAppointment(scheduler.calendarId)}
                                         >
                                             Cancel
                                         </button>
