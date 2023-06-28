@@ -3,8 +3,11 @@ import "./loginform.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import ResetPasswordForm from "../pages/ResetPasswordForm";
 
 function LoginForm() {
+  
+
   const [errorMessage, setErrorMessage] = useState("");
   const [personne, setUser] = useState({
     email: "",
@@ -21,13 +24,18 @@ function LoginForm() {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:9090/login", personne);
+
       const data = response.data;
 
       const tokenObject = JSON.stringify(data);
       
       Cookies.set("token", tokenObject);
       console.log("Response data:", data);
+      console.log("Login successful!"); // Success message
+
       window.location.reload();
+
+
 
     } catch (error) {
       setErrorMessage(error.response.data.message);
@@ -35,12 +43,36 @@ function LoginForm() {
     }
   };
 
+  
+    const validationAndSendEmail = async (emailVar) => {
+      try {
+        const response = await fetch(`http://localhost:9090/resetpasswordrequest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ "email" : emailVar }),
+
+        });
+
+        if (response.ok) {
+          console.log(response);
+        } else {
+          console.error('Invalid Email');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setErrorMessage('An error occurred while validating the email');
+      }
+    };
+
+
+
   useEffect(() => {
     const home = document.querySelector(".home");
     const formContainer = document.querySelector(".form_container");
     const signupBtn = document.querySelector("#signup");
     const loginBtn = document.querySelector("#login");
-
     home.classList.add("show");
 
     signupBtn.addEventListener("click", (e) => {
@@ -51,7 +83,25 @@ function LoginForm() {
       e.preventDefault();
       formContainer.classList.remove("active");
     });
+    const sendreq = document.getElementById("sendreq");
+
+    const handleClick = (e) => {
+      console.log("I'm clicked");
+      validationAndSendEmail(document.getElementById("emailForReset").value);
+    };
+
+    sendreq.addEventListener("click", handleClick);
   }, []);
+
+/*   const sendreq =document.getElementById("sendreq");
+
+
+  sendreq.addEventListener("click",(e) => {
+    console.log("I'm clicked");
+    validationAndSendEmail(document.getElementById("emailForReset").value);
+  }); */
+
+
 
   return (
     <div className="cover">
@@ -114,13 +164,14 @@ function LoginForm() {
               <h2>Forgot Password</h2>
               <div className="input_box">
                 <input
+                  id="emailForReset"
                   type="email"
                   placeholder="Enter your email"
                   required
                 />
                 <i className="uil uil-envelope-alt email"></i>
               </div>
-              <button className="button">Send Requisite</button>
+              <button className="button" id="sendreq">Send Requisite</button> 
               <div className="login_signup">
                 Back to
                 <a href="#" id="login">
