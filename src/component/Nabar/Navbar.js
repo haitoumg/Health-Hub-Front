@@ -21,7 +21,7 @@ const Navbar = ({ tipoMenu, handleMenu }) => {
             <button className="btn-menu" onClick={handleMenu}>
                 <i className="fas fa-bars"></i>
             </button>
-
+            
             <h2>HEALTH HUB</h2>
 
             <div className="dropdown">
