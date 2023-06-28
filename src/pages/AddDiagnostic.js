@@ -65,7 +65,7 @@ const AddDiagnostic = () => {
             <option value="">Select an employee</option>
             {employees.map((employee) => (
               <option value={employee.personneId} key={employee.personneId}>
-                {employee.firstName} { employee.lastName }
+                { employee.lastName } {employee.firstName} 
               </option>
             ))}
           </select>
