@@ -60,6 +60,7 @@ const AddDiagnostic = () => {
             onChange={(e) => onInputChange(e)}
             name="employeeId"
             style={{ width: "400px" }}
+            required
             // Updated to use the idSearch value
           >
             <option value="">Select an employee</option>
@@ -82,6 +83,7 @@ const AddDiagnostic = () => {
               className="form-control"
               placeholder="Enter the Notes...."
               onChange={(e) => onInputChange(e)}
+              required
             />
           </div>
         </div>
