@@ -55,6 +55,14 @@ const Menu = ({ children }) => {
                                     <span>List Reservation</span>
                                 </NavLink>
                             </li>
+                            <li>
+                                <NavLink className="link-menu" to="/Diagnostic">
+                                    <i className="fa-solid fa-calendar-check"></i>
+                                    <span>Diagnostic of employee</span>
+                                </NavLink>
+                            </li>
+                            
+                            
                         </ItemMenu>
                     )}
 

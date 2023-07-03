@@ -11,13 +11,16 @@ import LoginForm from "./components/loginform";
 import "./App.css";
 import Welcome from "./pages/Welcome";
 import Cookies from "js-cookie";
-
 import ChangePassword from "./components/ChangePassword";
 import MyReservation from "./pages/MyReservation";
 import Appointment from "./pages/Appointment";
+<<<<<<< HEAD
 import ResetPasswordForm from "./pages/ResetPasswordForm";
+=======
+>>>>>>> 3544f2749afd4fad830695290bdbf0528417c77c
 import ListReservation from "./pages/ListReservation";
-
+import Diagnostic from "./pages/Diagnostic";
+import AddDiagnostic from "./pages/AddDiagnostic";
 
 class App extends Component {
   isLoggedIn() {
@@ -234,6 +237,38 @@ class App extends Component {
                     <div className="scheduler-container">
                       <Home />
                       <Appointment />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/Diagnostic"
+              element={
+                this.isLoggedIn() ? (
+
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <Diagnostic />
+                    </div>
+                  </Menu>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/AddDiagnostic"
+              element={
+                this.isLoggedIn() ? (
+
+                  <Menu>
+                    <div className="scheduler-container">
+                      <Home />
+                      <AddDiagnostic/>
                     </div>
                   </Menu>
                 ) : (

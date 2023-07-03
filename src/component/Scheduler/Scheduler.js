@@ -5,6 +5,7 @@ import axios from "axios";
 import "./Scheduler.css";
 import Cookies from "js-cookie";
 import { scheduler } from "dhtmlx-scheduler";
+
 export default class Scheduler extends Component {
   state = {
     userId: null,
