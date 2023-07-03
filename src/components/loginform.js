@@ -42,6 +42,7 @@ function LoginForm() {
       console.error("Error:", error.message);
     }
   };
+  
 
   
     const validationAndSendEmail = async (emailVar) => {
@@ -92,16 +93,6 @@ function LoginForm() {
 
     sendreq.addEventListener("click", handleClick);
   }, []);
-
-/*   const sendreq =document.getElementById("sendreq");
-
-
-  sendreq.addEventListener("click",(e) => {
-    console.log("I'm clicked");
-    validationAndSendEmail(document.getElementById("emailForReset").value);
-  }); */
-
-
 
   return (
     <div className="cover">
