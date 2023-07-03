@@ -14,10 +14,7 @@ import Cookies from "js-cookie";
 import ChangePassword from "./components/ChangePassword";
 import MyReservation from "./pages/MyReservation";
 import Appointment from "./pages/Appointment";
-<<<<<<< HEAD
 import ResetPasswordForm from "./pages/ResetPasswordForm";
-=======
->>>>>>> 3544f2749afd4fad830695290bdbf0528417c77c
 import ListReservation from "./pages/ListReservation";
 import Diagnostic from "./pages/Diagnostic";
 import AddDiagnostic from "./pages/AddDiagnostic";
