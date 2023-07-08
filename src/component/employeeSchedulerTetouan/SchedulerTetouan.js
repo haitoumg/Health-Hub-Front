@@ -109,12 +109,22 @@ export default class SchedulerTetouan extends Component {
       console.log(calendarsInfos);
       console.log(scheduler);
       let calendars=[];
+     
       for (let calendarInfos of calendarsInfos) {
+        const date = new Date(calendarInfos.workingDay.substring(0,11)+calendarInfos.endTime);
+
+        // Get the current date
+          const currentDate = new Date();
+          let isExpired=false;
+          // Compare the two dates
+  if (date < currentDate) {
+       isExpired= true;
+  }
         calendars.push({
           text: (calendarInfos.employeeLastName!=null && calendarInfos.employeeFirstName!=null)?calendarInfos.employeeLastName+" "+calendarInfos.employeeFirstName:"",
           start_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.startTime,
           end_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.endTime,
-          color: (calendarInfos.booked == true)?"green":"blue",
+          color: (isExpired==true)?"gray":((calendarInfos.booked == true)?"green":"blue"),
           calendarId: calendarInfos.calendarId
         });
     }

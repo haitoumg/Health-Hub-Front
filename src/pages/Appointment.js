@@ -8,6 +8,8 @@ export default function Appointment() {
     const [loggedInUserLogin, setLoggedInUserLogin] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(13);
+    const [sortOption, setSortOption] = useState("");
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +21,11 @@ export default function Appointment() {
             loadSchedulers();
         }
     }, [loggedInUserLogin, currentPage]); // Trigger the effect when either loggedInUserLogin or currentPage changes
+    useEffect(() => {
+        console.log("333");
+        console.log("schedulers ddd:", schedulers);
+        sortListSchedulers();
+      }, [sortOption]);
 
     const checkLoggedIn = () => {
         const isLoggedIn = !!Cookies.get("token")=== true;
@@ -58,6 +65,27 @@ export default function Appointment() {
             console.error('Error canceling reservation:', error);
         }    };
 
+        const sortListSchedulers = () => {
+            let sortedSchedulers = [...schedulers];
+            console.log("sortedReservations here :", sortedSchedulers, schedulers);
+            if (sortOption === "recent") {
+                console.log("recent");
+                sortedSchedulers.sort(
+                (a, b) => new Date(b.startDate) - new Date(a.startDate)
+              );
+            } else if (sortOption === "old") {
+                console.log("old");
+    
+                sortedSchedulers.sort(
+                (a, b) => new Date(a.startDate) - new Date(b.startDate)
+              );
+            }
+         
+               
+            setSchedulers(sortedSchedulers);
+                  
+            
+          };
     // Calculate the indexes of the items to display on the current page
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -75,6 +103,16 @@ export default function Appointment() {
         <div>
             <div className="container">
                 <div className="py-4">
+                <select
+                    className="form-control-sm text-center mb-3"
+                    style={{ width: "200px" }}
+                    value={sortOption}
+                    onChange={(event) => setSortOption(event.target.value)}
+                >
+                <option value="#"> Sort by </option>{" "}
+                <option value="recent"> Recent Date </option>{" "}
+                <option value="old"> Old Date </option>{" "}
+            </select>{" "}
                     <table className="table border shadow">
                         <thead>
                             <tr>
