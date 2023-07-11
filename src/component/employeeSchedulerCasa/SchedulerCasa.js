@@ -5,7 +5,7 @@ import 'dhtmlx-scheduler/codebase/dhtmlxscheduler_material.css';
 import axios from 'axios';
 import './Scheduler.css';
 import Cookies from "js-cookie";
-
+import Swal from 'sweetalert2';
 
 // const getUserByLogin = async (login) => {
 //   try {
@@ -247,16 +247,26 @@ export default class SchedulerCasa extends Component {
       }
 
       // Ask the user if they want to reserve the appointment
-      const confirmed = window.confirm('Do you want to reserve this appointment?');
-      if (!confirmed) {
-        return;
-      }
-
-
-      // Perform your desired actions for making a reservation here
-
-      // Update the status of the clicked event
-      event.status = true; // Set the status to true or any other value you want
+      let confirmed = false;
+      let impossible=false;
+      if(event.color =="blue"){
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "Do you want to reserve this appointment?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, reserve it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            confirmed = true;
+            Swal.fire(
+              'reserved!',
+              'Your reservation has been added.',
+              'success'
+            );
+            event.status = true; // Set the status to true or any other value you want
 
       // Change the color of the clicked event
       event.color = 'green'; // Set the desired color
@@ -267,7 +277,12 @@ export default class SchedulerCasa extends Component {
         let date = new Date();
         let dateFormat = date.getFullYear() + "-" + (('0'+date.getMonth()+1).slice(-2)) + "-" + ('0'+date.getDate()).slice(-2);
         console.log(dateFormat, userData.personneId, event.calendarId);
-        const response = await axios.post(`http://localhost:9090/appointment`, {"dateAppointment":dateFormat, "employeeId": userData.personneId, "calendarId": event.calendarId});        console.log('Updated event:', response.data);
+        const reservationResponse0 = async () => {
+          const response = await axios.post(`http://localhost:9090/appointment`, {"dateAppointment":dateFormat, "employeeId": userData.personneId, "calendarId": event.calendarId});        
+          return response;
+        };
+        const response =reservationResponse0();
+        console.log('Updated event:', response.data);
       } catch (error) {
         console.error('Error updating event:', error);
       }
@@ -283,8 +298,12 @@ export default class SchedulerCasa extends Component {
           whatHubReservation: this.state.whatHubReservation, // Use the whatHubReservation state
         };
 
-        const reservationResponse = await axios.post('http://localhost:9090/reservations', reservationData);
-        console.log('Reservation saved:', reservationResponse.data);
+        const reservationResponse = async () => {
+          const response = await axios.post('http://localhost:9090/reservations', reservationData);
+          return response;
+        };
+        let response= reservationResponse();    
+        console.log('Reservation saved:', response.data);
 
         // Update the available appointments state by removing the booked appointment
         const { availableAppointments } = this.state;
@@ -293,6 +312,43 @@ export default class SchedulerCasa extends Component {
       } catch (error) {
         console.error('Error saving reservation:', error);
       }
+
+          }
+        });
+      }else if(event.color =="gray"){
+        // impossible=window.confirm("Sorry, you can't reserve this appointment, it's too late");
+        Swal.fire({
+          title: "Sorry, you can't reserve this appointment, it's too late",
+          confirmButtonColor:"#13274F",
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
+        })
+      }else if(event.color=="green"){
+        Swal.fire({
+          title: "Sorry, you can't reserve this appointment again",
+          confirmButtonColor:"#13274F",
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
+        })
+      }
+      console.log("coooonffffffiiiirrrmed : "+confirmed);
+      if (!confirmed) {
+        return;
+      }
+
+
+      // Perform your desired actions for making a reservation here
+
+      // Update the status of the clicked event
+      
 
       // Perform any additional actions you want with the clicked event here
     });
@@ -327,6 +383,7 @@ export default class SchedulerCasa extends Component {
 
   render() {
     return (
+      
       <div
         ref={input => {
           this.schedulerContainer = input;
@@ -336,6 +393,7 @@ export default class SchedulerCasa extends Component {
           height: '105.5%',
         }}
       />
+      
     );
   }
 }
