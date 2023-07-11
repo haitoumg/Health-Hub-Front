@@ -35,7 +35,7 @@ export default function Diagnostic() {
   };
 
   const loadEmployee = async () => {
-    const result1 = await axios.get("http://localhost:9090/employees");
+    const result1 = await axios.get("http://localhost:9090/employeesInfos");
     setEmployees(result1.data);
   };
 
@@ -108,9 +108,9 @@ export default function Diagnostic() {
             >
               <option value=""> Select an employee </option>{" "}
               {employees.map((employee) => (
-                <option value={employee.personneId} key={employee.personneId}>
+                <option value={employee.idPersone} key={employee.idPersone}>
                   {" "}
-                  {employee.lastName} {employee.firstName}{" "}
+                  {employee.fullName}{" "}
                 </option>
               ))}{" "}
             </select>{" "}
