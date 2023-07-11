@@ -146,16 +146,13 @@ export default function Diagnostic() {
             {diagnostics.map((diagnostic, index) => {
               const matchedEmployee = employees.find(
                 (employee) =>
-                  employee.personneId === diagnostic.employee.personneId
+                  employee.idPersone === diagnostic.employee.personneId
               );
               return (
                 <tr key={index}>
                   <th scope="row"> {index + 1} </th>{" "}
                   {matchedEmployee ? (
-                    <td>
-                      {" "}
-                      {matchedEmployee.lastName} {matchedEmployee.firstName}{" "}
-                    </td>
+                    <td> {matchedEmployee.fullName} </td>
                   ) : (
                     <td> - </td>
                   )}{" "}
