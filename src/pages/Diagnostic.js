@@ -40,15 +40,20 @@ export default function Diagnostic() {
   };
 
   const loadIdSearch = async () => {
-    const token = Cookies.get("token");
-    const tokenObject = token ? JSON.parse(token) : null;
-    try {
-      const result2 = await axios.get(
-        `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${idSearch}`
-      );
-      setDiagnostics(result2.data);
-    } catch (error) {
-      console.error("Error: ", error);
+    if (idSearch === "") {
+      loadDiagnostic();
+      return;
+    } else {
+      const token = Cookies.get("token");
+      const tokenObject = token ? JSON.parse(token) : null;
+      try {
+        const result2 = await axios.get(
+          `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${idSearch}`
+        );
+        setDiagnostics(result2.data);
+      } catch (error) {
+        console.error("Error: ", error);
+      }
     }
   };
 
