@@ -8526,10 +8526,10 @@ svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
-sweetalert2@^11.7.13:
-  version "11.7.13"
-  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.7.13.tgz"
-  integrity sha512-I217raE0UbY+RgcwasTwUNyI3kp1EtOgfauaWUM5Jg0SsxBwlwG25mFVeD4OqHkwqsuJ71rPRCvjB+2TtvD/Iw==
+sweetalert2@^11.7.16:
+  version "11.7.16"
+  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.7.16.tgz"
+  integrity sha512-vxqVcA358RWdK/XOG1gFtOzT7qBH186Ry4gnW0Xtrx7vIo1mpnR8hG8MxQms4gz3JPbYQ6UIgZn0+hTK7in3Jw==
 
 symbol-tree@^3.2.4:
   version "3.2.4"

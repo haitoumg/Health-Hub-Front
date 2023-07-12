@@ -44,7 +44,7 @@ const Navbar = ({ tipoMenu, handleMenu }) => {
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                     <li>
                         <a className="dropdown-item" href="ChangePassword">
-                            Setting
+                            Change Password
                         </a>
                     </li>
                     <li>
