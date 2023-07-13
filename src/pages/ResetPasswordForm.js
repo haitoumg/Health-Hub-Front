@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/* import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,14 +9,13 @@ const ResetPasswordForm = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailValid, setEmailValid] = useState(false);
-  const encryptedEmail = email;
   const navigate = useNavigate();
 
   useEffect(() => {
     const validateEmail = async () => {
       try {
 
-        const response = await fetch(`http://localhost:9090/validateemail/${encryptedEmail}`, {
+        const response = await fetch(`http://localhost:9090/validateemail/${email}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +50,7 @@ const ResetPasswordForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ "email": encryptedEmail ,"newPassword": newPassword, "confirmedPassword":confirmPassword }),
+        body: JSON.stringify({ "email": email ,"newPassword": newPassword, "confirmedPassword":confirmPassword }),
       });
 
       if (response.ok) {
@@ -149,3 +148,4 @@ const ResetPasswordForm = () => {
 };
 
 export default ResetPasswordForm;
+  */
