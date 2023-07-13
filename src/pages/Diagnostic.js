@@ -139,35 +139,40 @@ export default function Diagnostic() {
             </select>{" "}
           </div>{" "}
         </form>{" "}
-        <table className="border shadow table">
-          <thead>
-            <tr>
-              <th scope="col"> # </th> <th scope="col"> Complet Name </th>{" "}
-              <th scope="col"> Note </th> <th scope="col"> Date </th>{" "}
-            </tr>{" "}
-          </thead>{" "}
-          <tbody>
-            {" "}
-            {diagnostics.map((diagnostic, index) => {
-              const matchedEmployee = employees.find(
-                (employee) =>
-                  employee.idPersone === diagnostic.employee.personneId
-              );
-              return (
-                <tr key={index}>
-                  <th scope="row"> {index + 1} </th>{" "}
-                  {matchedEmployee ? (
-                    <td> {matchedEmployee.fullName} </td>
-                  ) : (
-                    <td> - </td>
-                  )}{" "}
-                  <td> {diagnostic.note} </td>{" "}
-                  <td> {diagnostic.diagnosticDate} </td>{" "}
-                </tr>
-              );
-            })}{" "}
-          </tbody>{" "}
-        </table>{" "}
+        <div class="table-responsive">
+          <table className="border shadow table table-break-word">
+            <thead>
+              <tr>
+                <th scope="col"> # </th> <th scope="col"> Complet Name </th>{" "}
+                <th scope="col"> Note </th> <th scope="col"> Date </th>{" "}
+              </tr>{" "}
+            </thead>{" "}
+            <tbody>
+              {" "}
+              {diagnostics.map((diagnostic, index) => {
+                const matchedEmployee = employees.find(
+                  (employee) =>
+                    employee.idPersone === diagnostic.employee.personneId
+                );
+                return (
+                  <tr key={index}>
+                    <th scope="row"> {index + 1} </th>{" "}
+                    {matchedEmployee ? (
+                      <td> {matchedEmployee.fullName} </td>
+                    ) : (
+                      <td> - </td>
+                    )}{" "}
+                    <td style={{ wordWrap: "break-word", maxWidth: "350px" }}>
+                      {" "}
+                      {diagnostic.note}{" "}
+                    </td>{" "}
+                    <td> {diagnostic.diagnosticDate.toLocaleString()} </td>{" "}
+                  </tr>
+                );
+              })}{" "}
+            </tbody>{" "}
+          </table>
+        </div>{" "}
         <ul className="pagination justify-content-center">
           {" "}
           {Array(Math.ceil(diagnostics.length / itemsPerPage))
