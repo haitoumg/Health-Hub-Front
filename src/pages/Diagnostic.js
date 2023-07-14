@@ -5,12 +5,14 @@ import Cookies from "js-cookie";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
+import Autocomplete from "react-autocomplete";
 
 export default function Diagnostic() {
   const navigate = useNavigate();
   const [diagnostics, setDiagnostics] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [idSearch, setIdSearch] = useState("");
+  const [Search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [sortOption, setSortOption] = useState("");
   ///
@@ -43,12 +45,21 @@ export default function Diagnostic() {
     if (idSearch === "") {
       loadDiagnostic();
       return;
-    } else {
+    }
+
+    const selectedValue = idSearch; // Store the selected value
+
+    const selectedEmployee = employees.find(
+      (employee) => employee.fullName === selectedValue
+    );
+
+    if (selectedEmployee) {
       const token = Cookies.get("token");
       const tokenObject = token ? JSON.parse(token) : null;
+
       try {
         const result2 = await axios.get(
-          `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${idSearch}`
+          `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${selectedEmployee.idPersone}`
         );
         setDiagnostics(result2.data);
       } catch (error) {
@@ -105,22 +116,38 @@ export default function Diagnostic() {
             </button>{" "}
           </div>{" "}
           <div className="d-flex justify-content-center align-items-center">
-            <select
+            <Autocomplete
               className="form-control-sm text-center mb-3"
               style={{ width: "200px", marginRight: "10px" }}
               value={idSearch}
-              onChange={handleInputChange}
-            >
-              <option value=""> Select an employee </option>{" "}
-              {employees.map((employee) => (
-                <option value={employee.idPersone} key={employee.idPersone}>
+              items={employees}
+              getItemValue={(item) => item.fullName}
+              onChange={(event) => setIdSearch(event.target.value)}
+              onSelect={(value) => setIdSearch(value)}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  type="text"
+                  className="form-control-sm text-center mb-3"
+                  placeholder="Select an employee"
+                />
+              )}
+              renderItem={(item, isHighlighted) => (
+                <div
+                  key={item.idPersone}
+                  style={{ background: isHighlighted ? "lightgray" : "white" }}
+                >
                   {" "}
-                  {employee.fullName}{" "}
-                </option>
-              ))}{" "}
-            </select>{" "}
+                  {item.fullName}{" "}
+                </div>
+              )}
+            />{" "}
             <button
-              style={{ width: "150px", marginRight: "50px" }}
+              style={{
+                width: "150px",
+                marginRight: "50px",
+                marginLeft: "10px",
+              }}
               type="button"
               className="btn btn-success mb-3"
               onClick={loadIdSearch}

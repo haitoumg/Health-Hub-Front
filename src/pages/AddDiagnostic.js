@@ -52,8 +52,7 @@ const AddDiagnostic = () => {
   return (
     <div className="container">
       <form onSubmit={(e) => onSubmet(e)}>
-        <br></br>
-        <br></br>
+        <br> </br> <br> </br>{" "}
         <div className="d-flex justify-content-center align-items-center">
           <select
             className="form-control-sm text-center mb-3"
@@ -63,17 +62,17 @@ const AddDiagnostic = () => {
             required
             // Updated to use the idSearch value
           >
-            <option value="">Select an employee</option>
+            <option value=""> Select an employee </option>{" "}
             {employees.map((employee) => (
               <option value={employee.personneId} key={employee.personneId}>
-                { employee.lastName } {employee.firstName} 
+                {" "}
+                {employee.lastName} {employee.firstName}{" "}
               </option>
-            ))}
-          </select>
+            ))}{" "}
+          </select>{" "}
         </div>
-
         <div className="form-group row">
-          <label className="col-sm-2 col-form-label">Note:</label>
+          <label className="col-sm-2 col-form-label"> Note: </label>{" "}
           <div className="col-sm-10">
             <textarea
               maxLength={600}
@@ -85,10 +84,9 @@ const AddDiagnostic = () => {
               onChange={(e) => onInputChange(e)}
               required
             />
-          </div>
-        </div>
-        <br></br>
-        <br></br>
+          </div>{" "}
+        </div>{" "}
+        <br> </br> <br> </br>{" "}
         <div className="form-group row">
           <div className="col-sm-10 offset-sm-2">
             <button
@@ -96,11 +94,11 @@ const AddDiagnostic = () => {
               type="submit"
               className="btn btn-primary ml-2 button"
             >
-              Save
-            </button>
-          </div>
-        </div>
-      </form>
+              Save{" "}
+            </button>{" "}
+          </div>{" "}
+        </div>{" "}
+      </form>{" "}
     </div>
   );
 };
