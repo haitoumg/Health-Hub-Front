@@ -3,6 +3,7 @@ import axios from "axios";
 import Diagnostic from "./Diagnostic";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import Autocomplete from "react-autocomplete";
 
 const AddDiagnostic = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,16 +33,24 @@ const AddDiagnostic = () => {
     e.preventDefault();
     const token = Cookies.get("token");
     const tokenObject = token ? JSON.parse(token) : null;
+    const selectedValue = idSearch; // Store the selected value
+
+    const selectedEmployee = employees.find(
+      (employee) => employee.fullName === selectedValue
+    );
     diagnostics.doctorId = tokenObject.personneId;
-    await axios.post("http://localhost:9090/diagnostic", diagnostics);
+    if (selectedEmployee) {
+      diagnostics.employeeId = selectedEmployee.idPersone;
+      await axios.post("http://localhost:9090/diagnostic", diagnostics);
 
-    //window.location.reload();
-    navigate("/Diagnostic");
+      //window.location.reload();
+      navigate("/Diagnostic");
 
-    //document.location.href = "http://localhost:3000/Diagnostic";
+      //document.location.href = "http://localhost:3000/Diagnostic";
+    }
   };
   const loadEmployee = async () => {
-    const result1 = await axios.get("http://localhost:9090/employees");
+    const result1 = await axios.get("http://localhost:9090/employeesInfos");
     setEmployees(result1.data);
   };
   useEffect(() => {
@@ -52,25 +61,35 @@ const AddDiagnostic = () => {
   return (
     <div className="container">
       <form onSubmit={(e) => onSubmet(e)}>
-        <br> </br> <br> </br>{" "}
+        <br /> <br />
         <div className="d-flex justify-content-center align-items-center">
-          <select
+          <Autocomplete
             className="form-control-sm text-center mb-3"
-            onChange={(e) => onInputChange(e)}
-            name="employeeId"
-            style={{ width: "400px" }}
-            required
-            // Updated to use the idSearch value
-          >
-            <option value=""> Select an employee </option>{" "}
-            {employees.map((employee) => (
-              <option value={employee.personneId} key={employee.personneId}>
+            style={{ width: "200px", marginTop: "40px" }}
+            value={idSearch}
+            items={employees}
+            getItemValue={(item) => item.fullName}
+            onChange={(event) => setIdSearch(event.target.value)}
+            onSelect={(value) => setIdSearch(value)}
+            renderInput={(props) => (
+              <input
+                {...props}
+                type="text"
+                className="form-control-sm text-center mb-3"
+                placeholder="Select an employee"
+              />
+            )}
+            renderItem={(item, isHighlighted) => (
+              <div
+                key={item.idPersone}
+                style={{ background: isHighlighted ? "lightgray" : "white" }}
+              >
                 {" "}
-                {employee.lastName} {employee.firstName}{" "}
-              </option>
-            ))}{" "}
-          </select>{" "}
-        </div>
+                {item.fullName}{" "}
+              </div>
+            )}
+          />{" "}
+        </div>{" "}
         <div className="form-group row">
           <label className="col-sm-2 col-form-label"> Note: </label>{" "}
           <div className="col-sm-10">
@@ -86,11 +105,10 @@ const AddDiagnostic = () => {
             />
           </div>{" "}
         </div>{" "}
-        <br> </br> <br> </br>{" "}
         <div className="form-group row">
           <div className="col-sm-10 offset-sm-2">
             <button
-              style={{ width: "200px" }}
+              style={{ width: "200px", marginTop: "40px" }}
               type="submit"
               className="btn btn-primary ml-2 button"
             >
