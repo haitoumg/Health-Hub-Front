@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PasswordStrengthMeter from './PasswordStrengthMeter';
+
 
 const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -54,7 +56,7 @@ const ChangePasswordForm = () => {
       maxWidth: '50rem',
       height: '25rem',
       margin: 'auto',
-      marginTop: '18rem',
+      marginTop: '7rem',
       padding: '20px',
       borderRadius: '25px',
       boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -98,6 +100,7 @@ const ChangePasswordForm = () => {
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
               </div>
+               {/* <div className='w-full'>  */}
               <div className="mb-3" style={styles.input}>
                 <input
                   type="password"
@@ -108,6 +111,7 @@ const ChangePasswordForm = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
+              <PasswordStrengthMeter password={newPassword} />
               <div className="mb-3" style={styles.input}>
                 <input
                   type="password"
@@ -133,5 +137,4 @@ const ChangePasswordForm = () => {
     </div>
   );
 };
-
 export default ChangePasswordForm;
