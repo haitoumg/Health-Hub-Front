@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
+import Swal from 'sweetalert2';
 
 
 const ChangePasswordForm = () => {
@@ -37,6 +38,11 @@ const ChangePasswordForm = () => {
       });
 
       if (response.ok) {
+        Swal.fire(
+          'Password changed!',
+          'Your password has been changed.',
+          'success'
+        );
         toast.success('Password changed successfully');
         navigate('/');
       } else if (response.status === 401) {
@@ -100,7 +106,6 @@ const ChangePasswordForm = () => {
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
               </div>
-               {/* <div className='w-full'>  */}
               <div className="mb-3" style={styles.input}>
                 <input
                   type="password"

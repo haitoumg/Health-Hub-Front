@@ -14,7 +14,6 @@ import Cookies from "js-cookie";
 import ChangePassword from "./components/ChangePassword";
 import MyReservation from "./pages/MyReservation";
 import Appointment from "./pages/Appointment";
-import ResetPasswordForm from "./pages/ResetPasswordForm";
 import ListReservation from "./pages/ListReservation";
 import Diagnostic from "./pages/Diagnostic";
 import AddDiagnostic from "./pages/AddDiagnostic";
@@ -139,8 +138,6 @@ class App extends Component {
                 )
               }
             />
-
-            { <Route path="/ResetPasswordForm/:email" element={<ResetPasswordForm />} /> }
             <Route path="/ChangePassword" element={<ChangePassword />} />
             <Route
               path="/Welcome"
