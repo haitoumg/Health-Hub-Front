@@ -4,6 +4,9 @@ import Diagnostic from "./Diagnostic";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Autocomplete from "react-autocomplete";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 const AddDiagnostic = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,6 +47,12 @@ const AddDiagnostic = () => {
       await axios.post("http://localhost:9090/diagnostic", diagnostics);
 
       //window.location.reload();
+      Swal.fire(
+        "Diagnostic Added!",
+        "Your Diagnostic has been Added.",
+        "success"
+      );
+      toast.success("Add Diagnostic successfully");
       navigate("/Diagnostic");
 
       //document.location.href = "http://localhost:3000/Diagnostic";
