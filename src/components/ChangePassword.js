@@ -60,7 +60,7 @@ const ChangePasswordForm = () => {
   const styles = {
     cardBody: {
       maxWidth: '50rem',
-      height: '25rem',
+      height: '28rem',
       margin: 'auto',
       marginTop: '7rem',
       padding: '20px',

@@ -54,14 +54,14 @@ function LoginForm() {
         if (response.ok) {
           Swal.fire(
             'Password updated!',
-            'Your temporary password was sent in your email, please check your email box and change you password once logged in.',
+            'Your temporary password was sent in your email. \n please check your email box and change you password once logged in.',
             'success'
           );
           console.log(response);
         } else {
           console.error('Invalid Email');
           Swal.fire({
-            title: "Sorry, we can't recognize your email.\n You might be! not registered",
+            title: "Sorry, we can't recognize your email.\n You might be not registered!",
             confirmButtonColor:"#13274F", 
             showClass: {
               popup: 'animate__animated animate__fadeInDown'
