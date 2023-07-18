@@ -117,7 +117,11 @@ const AddDiagnostic = () => {
         <div className="form-group row">
           <div className="col-sm-10 offset-sm-2">
             <button
-              style={{ width: "200px", marginTop: "40px" }}
+              style={{
+                width: "200px",
+                marginTop: "40px",
+                background: "#13274F",
+              }}
               type="submit"
               className="btn btn-primary ml-2 button"
             >

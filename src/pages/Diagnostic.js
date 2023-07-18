@@ -108,7 +108,7 @@ export default function Diagnostic() {
           <div>
             <button
               onClick={redirectAddClick}
-              style={{ width: "200px" }}
+              style={{ width: "200px", background: "#13274F" }}
               className="btn btn-primary mb-3"
               type="submit"
             >
@@ -198,7 +198,7 @@ export default function Diagnostic() {
                 );
               })}{" "}
             </tbody>{" "}
-          </table>
+          </table>{" "}
         </div>{" "}
         <ul className="pagination justify-content-center">
           {" "}
