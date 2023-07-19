@@ -5,14 +5,17 @@ import Cookies from "js-cookie";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
+import Autocomplete from "react-autocomplete";
+import SortDropdown from "../component/diagnostic/SortDropdown";
 
 export default function Diagnostic() {
   const navigate = useNavigate();
   const [diagnostics, setDiagnostics] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [idSearch, setIdSearch] = useState("");
+  const [Search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [sortOption, setSortOption] = useState("");
+  const [sortOption, setSortOption] = useState("recent");
   ///
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(13);
@@ -31,7 +34,11 @@ export default function Diagnostic() {
     const result = await axios.get(
       `http://localhost:9090/diagnosticByDoctor/${tokenObject.personneId}`
     );
-    setDiagnostics(result.data);
+    setDiagnostics(
+      result.data.sort(
+        (a, b) => new Date(b.diagnosticDate) - new Date(a.diagnosticDate)
+      )
+    );
   };
 
   const loadEmployee = async () => {
@@ -43,14 +50,27 @@ export default function Diagnostic() {
     if (idSearch === "") {
       loadDiagnostic();
       return;
-    } else {
+    }
+
+    const selectedValue = idSearch; // Store the selected value
+
+    const selectedEmployee = employees.find(
+      (employee) => employee.fullName === selectedValue
+    );
+
+    if (selectedEmployee) {
       const token = Cookies.get("token");
       const tokenObject = token ? JSON.parse(token) : null;
+
       try {
         const result2 = await axios.get(
-          `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${idSearch}`
+          `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${selectedEmployee.idPersone}`
         );
-        setDiagnostics(result2.data);
+        setDiagnostics(
+          result2.data.sort(
+            (a, b) => new Date(b.diagnosticDate) - new Date(a.diagnosticDate)
+          )
+        );
       } catch (error) {
         console.error("Error: ", error);
       }
@@ -74,6 +94,7 @@ export default function Diagnostic() {
   useEffect(() => {
     loadDiagnostic();
     loadEmployee();
+    sortDiagnostics();
   }, []);
   useEffect(() => {
     loadDiagnostic();
@@ -97,7 +118,7 @@ export default function Diagnostic() {
           <div>
             <button
               onClick={redirectAddClick}
-              style={{ width: "200px" }}
+              style={{ width: "200px", background: "#13274F" }}
               className="btn btn-primary mb-3"
               type="submit"
             >
@@ -105,69 +126,87 @@ export default function Diagnostic() {
             </button>{" "}
           </div>{" "}
           <div className="d-flex justify-content-center align-items-center">
-            <select
+            <Autocomplete
               className="form-control-sm text-center mb-3"
               style={{ width: "200px", marginRight: "10px" }}
               value={idSearch}
-              onChange={handleInputChange}
-            >
-              <option value=""> Select an employee </option>{" "}
-              {employees.map((employee) => (
-                <option value={employee.idPersone} key={employee.idPersone}>
+              items={employees}
+              getItemValue={(item) => item.fullName}
+              onChange={(event) => setIdSearch(event.target.value)}
+              onSelect={(value) => setIdSearch(value)}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  type="text"
+                  className="form-control-sm text-center mb-3"
+                  placeholder="Select an employee"
+                />
+              )}
+              renderItem={(item, isHighlighted) => (
+                <div
+                  key={item.idPersone}
+                  style={{ background: isHighlighted ? "lightgray" : "white" }}
+                >
                   {" "}
-                  {employee.fullName}{" "}
-                </option>
-              ))}{" "}
-            </select>{" "}
+                  {item.fullName}{" "}
+                </div>
+              )}
+            />{" "}
             <button
-              style={{ width: "150px", marginRight: "50px" }}
+              style={{
+                width: "150px",
+                marginRight: "50px",
+                marginLeft: "10px",
+              }}
               type="button"
               className="btn btn-success mb-3"
               onClick={loadIdSearch}
             >
               Search{" "}
             </button>{" "}
-            <select
-              className="form-control-sm text-center mb-3"
-              style={{ width: "200px" }}
-              value={sortOption}
-              onChange={(event) => setSortOption(event.target.value)}
-            >
-              <option value=""> Sort by </option>{" "}
-              <option value="recent"> Recent Date </option>{" "}
-              <option value="old"> Old Date </option>{" "}
-            </select>{" "}
           </div>{" "}
         </form>{" "}
-        <table className="border shadow table">
-          <thead>
-            <tr>
-              <th scope="col"> # </th> <th scope="col"> Complet Name </th>{" "}
-              <th scope="col"> Note </th> <th scope="col"> Date </th>{" "}
-            </tr>{" "}
-          </thead>{" "}
-          <tbody>
-            {" "}
-            {diagnostics.map((diagnostic, index) => {
-              const matchedEmployee = employees.find(
-                (employee) =>
-                  employee.idPersone === diagnostic.employee.personneId
-              );
-              return (
-                <tr key={index}>
-                  <th scope="row"> {index + 1} </th>{" "}
-                  {matchedEmployee ? (
-                    <td> {matchedEmployee.fullName} </td>
-                  ) : (
-                    <td> - </td>
-                  )}{" "}
-                  <td> {diagnostic.note} </td>{" "}
-                  <td> {diagnostic.diagnosticDate} </td>{" "}
-                </tr>
-              );
-            })}{" "}
-          </tbody>{" "}
-        </table>{" "}
+        <div class="table-responsive">
+          <table className="border shadow table table-break-word">
+            <thead>
+              <tr>
+                <th scope="col"> # </th> <th scope="col"> Complet Name </th>{" "}
+                <th scope="col"> Note </th>{" "}
+                <th scope="col">
+                  {" "}
+                  <SortDropdown
+                    value={sortOption}
+                    onChange={setSortOption}
+                  />{" "}
+                </th>{" "}
+              </tr>{" "}
+            </thead>{" "}
+            <tbody>
+              {" "}
+              {diagnostics.map((diagnostic, index) => {
+                const matchedEmployee = employees.find(
+                  (employee) =>
+                    employee.idPersone === diagnostic.employee.personneId
+                );
+                return (
+                  <tr key={index}>
+                    <th scope="row"> {index + 1} </th>{" "}
+                    {matchedEmployee ? (
+                      <td> {matchedEmployee.fullName} </td>
+                    ) : (
+                      <td> - </td>
+                    )}{" "}
+                    <td style={{ wordWrap: "break-word", maxWidth: "350px" }}>
+                      {" "}
+                      {diagnostic.note}{" "}
+                    </td>{" "}
+                    <td> {diagnostic.diagnosticDate.toLocaleString()} </td>{" "}
+                  </tr>
+                );
+              })}{" "}
+            </tbody>{" "}
+          </table>{" "}
+        </div>{" "}
         <ul className="pagination justify-content-center">
           {" "}
           {Array(Math.ceil(diagnostics.length / itemsPerPage))

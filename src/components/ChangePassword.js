@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PasswordStrengthMeter from './PasswordStrengthMeter';
+import Swal from 'sweetalert2';
+
 
 const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -35,6 +38,11 @@ const ChangePasswordForm = () => {
       });
 
       if (response.ok) {
+        Swal.fire(
+          'Password changed!',
+          'Your password has been changed.',
+          'success'
+        );
         toast.success('Password changed successfully');
         navigate('/');
       } else if (response.status === 401) {
@@ -52,9 +60,9 @@ const ChangePasswordForm = () => {
   const styles = {
     cardBody: {
       maxWidth: '50rem',
-      height: '25rem',
+      height: '28rem',
       margin: 'auto',
-      marginTop: '18rem',
+      marginTop: '7rem',
       padding: '20px',
       borderRadius: '25px',
       boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -108,6 +116,7 @@ const ChangePasswordForm = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
+              <PasswordStrengthMeter password={newPassword} />
               <div className="mb-3" style={styles.input}>
                 <input
                   type="password"
@@ -133,5 +142,4 @@ const ChangePasswordForm = () => {
     </div>
   );
 };
-
 export default ChangePasswordForm;

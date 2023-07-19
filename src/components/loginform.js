@@ -3,9 +3,9 @@ import "./loginform.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import Swal from 'sweetalert2';
 
 function LoginForm() {
-  
 
   const [errorMessage, setErrorMessage] = useState("");
   const [personne, setUser] = useState({
@@ -34,16 +34,12 @@ function LoginForm() {
 
       window.location.reload();
 
-
-
     } catch (error) {
       setErrorMessage(error.response.data.message);
       console.error("Error:", error.message);
     }
   };
-  
-
-  
+    
     const validationAndSendEmail = async (emailVar) => {
       try {
         const response = await fetch(`http://localhost:9090/resetpasswordrequest`, {
@@ -56,9 +52,24 @@ function LoginForm() {
         });
 
         if (response.ok) {
+          Swal.fire(
+            'Password updated!',
+            'Your temporary password was sent in your email. \n please check your email box and change you password once logged in.',
+            'success'
+          );
           console.log(response);
         } else {
           console.error('Invalid Email');
+          Swal.fire({
+            title: "Sorry, we can't recognize your email.\n You might be not registered!",
+            confirmButtonColor:"#13274F", 
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            }
+          })
         }
       } catch (error) {
         console.error('Error:', error);
