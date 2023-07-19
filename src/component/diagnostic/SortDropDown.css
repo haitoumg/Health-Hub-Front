@@ -1,0 +1,21 @@
+.sort-dropdown {
+  display: inline-block;
+  position: relative;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border: 1px solid #ddd;
+  list-style-type: none;
+}
+
+.sort-dropdown:hover .dropdown-menu {
+  display: block;
+}

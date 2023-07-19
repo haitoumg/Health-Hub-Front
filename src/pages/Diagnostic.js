@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import Autocomplete from "react-autocomplete";
+import SortDropdown from "../component/diagnostic/SortDropdown";
 
 export default function Diagnostic() {
   const navigate = useNavigate();
@@ -85,6 +86,8 @@ export default function Diagnostic() {
   useEffect(() => {
     loadDiagnostic();
     loadEmployee();
+    setSortOption("recent");
+    sortDiagnostics();
   }, []);
   useEffect(() => {
     loadDiagnostic();
@@ -154,16 +157,7 @@ export default function Diagnostic() {
             >
               Search{" "}
             </button>{" "}
-            <select
-              className="form-control-sm text-center mb-3"
-              style={{ width: "200px" }}
-              value={sortOption}
-              onChange={(event) => setSortOption(event.target.value)}
-            >
-              <option value=""> Sort by </option>{" "}
-              <option value="recent"> Recent Date </option>{" "}
-              <option value="old"> Old Date </option>{" "}
-            </select>{" "}
+            <SortDropdown value={sortOption} onChange={setSortOption} />{" "}
           </div>{" "}
         </form>{" "}
         <div class="table-responsive">
