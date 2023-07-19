@@ -146,7 +146,8 @@ export default function Reservations() {
             console.log("sortedReservations0 ", sortedReservations);
             setOriginalList(sortedReservations);
             setReservations(sortedReservations);
-         
+            setSortOption("recent");
+
         } catch (error) {
             console.error('Error fetching reservations:', error);
         }

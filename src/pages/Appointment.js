@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from "js-cookie";
+import Swal from 'sweetalert2';
 
 export default function Appointment() {
     const [schedulers, setSchedulers] = useState([]);
@@ -9,6 +10,7 @@ export default function Appointment() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(13);
     const [sortOption, setSortOption] = useState("");
+    const [deleteOption, setDeleteOption] = useState("");
 
     const navigate = useNavigate();
 
@@ -20,7 +22,7 @@ export default function Appointment() {
         if (loggedInUserLogin) {
             loadSchedulers();
         }
-    }, [loggedInUserLogin, currentPage]); // Trigger the effect when either loggedInUserLogin or currentPage changes
+    }, [loggedInUserLogin, currentPage, deleteOption]); // Trigger the effect when either loggedInUserLogin or currentPage changes
     useEffect(() => {
         console.log("333");
         console.log("schedulers ddd:", schedulers);
@@ -43,27 +45,52 @@ export default function Appointment() {
         try {
             const userData=  JSON.parse(Cookies.get("token"));
             const response = await axios.post(`http://localhost:9090/calendarsAvailableByDoctor`, {"id": userData.personneId});
+            console.log("resssssponse: ", response);
             const sortedSchedulers = response.data.sort((a, b) => b.schedulerId - a.schedulerId);
             setSchedulers(sortedSchedulers);
+            setSortOption("recent");
         } catch (error) {
             console.error('Error fetching schedulers:', error);
         }
     };
 
     const cancelAppointment = async (calendarId) => {
-        try {
-            console.log("calendarId : "+calendarId)
-            const response = await axios.delete("http://localhost:9090/calendar/"+calendarId);
-            console.log(response);
-            if (response.status == 200) {
-               console.log("deleted normally");
-               loadSchedulers();
-            } else {
-                throw new Error('Failed to cancel reservation');
-            }
-        } catch (error) {
-            console.error('Error canceling reservation:', error);
-        }    };
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to cancell this appointment?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancell it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    console.log("calendarId : "+calendarId);
+                    const response0 = async () => {
+                        let response=await axios.delete("http://localhost:9090/calendar/"+calendarId);
+                        return response;
+                    }
+                    (async () => {
+                        const deleteResponse = await response0();
+                        // Continue with the rest of your code after the delete operation is complete
+                        console.log("deleted normally");
+                        setDeleteOption(deleteOption+"*");
+                        Swal.fire(
+                            'Cancelled!',
+                            'Your appointement has been cancelled.',
+                            'success'
+                          );
+                      })();
+
+                   
+                } catch (error) {
+                    console.error('Error canceling reservation:', error);
+                }
+
+               
+    }});
+          };
 
         const sortListSchedulers = () => {
             let sortedSchedulers = [...schedulers];

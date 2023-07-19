@@ -21,5 +21,7 @@
         background-color: red;
         border-color: red;
 }
-
-
+.dhx_event_move.dhx_title{
+    font-size: 14px !important;
+    height: 50% !important;
+}

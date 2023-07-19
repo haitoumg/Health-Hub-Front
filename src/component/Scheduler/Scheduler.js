@@ -5,7 +5,10 @@ import axios from "axios";
 import "./Scheduler.css";
 import Cookies from "js-cookie";
 import { scheduler } from "dhtmlx-scheduler";
+import Legend from '../../legend/Legend';
 
+let green="#198754";
+let blue="#0288D1";
 export default class Scheduler extends Component {
   state = {
     userId: null,
@@ -21,6 +24,7 @@ export default class Scheduler extends Component {
   initializeScheduler = async () => {
     const scheduler = window.scheduler;
     scheduler.skin = "material";
+
     scheduler.config.header = [
       "day",
       "week",
@@ -30,11 +34,33 @@ export default class Scheduler extends Component {
       "today",
       "next",
     ];
+   
     scheduler.config.hour_date = "%g:%i %A";
     scheduler.config.time_step = 30;
-    scheduler.xy.scale_width = 100;
+    scheduler.config.first_hour = 8;
+    scheduler.config.last_hour = 18;
+    // scheduler.event.text_size = 80;
+    scheduler.templates.event_text = function(start, end, event) {
+      return "<div style='font-size:12px;'>" + event.text + "</div>";
+    };
+    
+    console.log("seeee ",scheduler.templates);
+    scheduler.config.time_range_label_style = "font-size:22px;";
+        scheduler.xy.scale_width = 100;
     scheduler.config.hour_size_px = 88;
-
+    scheduler.config.cell_width = 60;
+    scheduler.ignore_month = function(date){
+      if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+          return true;
+  };
+  scheduler.ignore_week = function(date){
+    if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+        return true;
+};
+scheduler.ignore_day = function(date){
+  if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+      return true;
+};
     scheduler.init(this.schedulerContainer, new Date());
     scheduler.clearAll();
 
@@ -46,6 +72,7 @@ export default class Scheduler extends Component {
     }
 
     const login = sessionStorage.getItem("login");
+    console.log("scheduler ::", scheduler);
     try {
 
       //const userData = await this.getUserByLogin(login);
@@ -110,8 +137,9 @@ if (date < currentDate) {
           text: (calendarInfos.employeeLastName!=null && calendarInfos.employeeFirstName!=null)?calendarInfos.employeeLastName+" "+calendarInfos.employeeFirstName:"",
           start_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.startTime,
           end_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.endTime,
-          color: (isExpired==true)?"gray":((calendarInfos.booked == true)?"green":"blue"),
-          calendarId: calendarInfos.calendarId
+          color: (isExpired==true)?"gray":((calendarInfos.booked == true)?green:blue),
+          calendarId: calendarInfos.calendarId,
+          textColor: "white"
         });
     }
 
@@ -420,13 +448,23 @@ if (date < currentDate) {
   }
 
   render() {
+    
     return (
+      <div  style={{ height: '100vh', backgroundColor: "white" }}>
+        <Legend colors={[blue, green, "gray"]} descriptions={["Available appointement for booking", "Appointment is taken by the employee whose name inside", "Appointment has expired"]}/>
+
       <div
-        ref={(input) => {
+        ref={input => {
           this.schedulerContainer = input;
         }}
-        style={{ width: '100%', height: '105%' }}
-      ></div>
-    );
-  }
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
+
+      </div>
+      
+    );
+  }
 }

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from "js-cookie";
+import Swal from 'sweetalert2';
 
 export default function Reservations() {
     const [reservations, setReservations] = useState([]);
     const [loggedInUserLogin, setLoggedInUserLogin] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(13);
-    const [sortOption, setSortOption] = useState("");
+    const [sortOption, setSortOption] = useState("recent");
     const [originalList, setOriginalList]=useState([]);
     const [cancellOption, setCancellOption]=useState("#");
     const [test, setTest]=useState("*");
@@ -55,6 +56,11 @@ useEffect(() => {
     console.log("555");
     handleEmployeeChange(0);
   }, [test3]);
+  useEffect(() => {
+   
+   filterListIsCancelled(1);
+  }, [originalList]);
+
     const checkLoggedIn = () => {
         const isLoggedIn = !!Cookies.get("token")=== true;
         if (!isLoggedIn) {
@@ -88,19 +94,36 @@ useEffect(() => {
     };
 
     const cancelReservation = async (id) => {
-        try {
-            const updatedReservation = {
-                "id": id
-            };
-            const response = await axios.put(`http://localhost:9090/appointment`, updatedReservation);
-            if (response.status === 200) {
-                loadReservations();
-            } else {
-                throw new Error('Failed to cancel reservation');
-            }
-        } catch (error) {
-            console.error('Error canceling reservation:', error);
-        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to cancell your reservation?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancell it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    const updatedReservation = {
+                        "id": id
+                    };
+                    const response0 = async () => {
+                        let response=await axios.put(`http://localhost:9090/appointment`, updatedReservation);
+                        return response;
+                    }
+                    let response=response0();
+                    console.log("response: ", response);
+                    setReservations([]);
+                    loadReservations();
+                    
+                   
+                } catch (error) {
+                    console.error('Error canceling reservation:', error);
+                }
+                
+              }});
+       
     };
     const sortListReservations = () => {
         let sortedReservations = [...reservations];
@@ -214,7 +237,7 @@ useEffect(() => {
               
               onChange={(event) => setEmployeeOption(event.target.value)}
             >
-              <option value="all"> Select a doctor </option>{" "}
+              <option value="recent"> Select a doctor </option>{" "}
               {employees.map((employee) => (
                 <option value={employee.fullName} >
                   {" "}

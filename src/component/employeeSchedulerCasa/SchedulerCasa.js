@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import 'dhtmlx-scheduler';
 // import { toast, ToastContainer } from 'react-toastify';
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler_material.css';
+import Legend from '../../legend/Legend';
+
 import axios from 'axios';
 import './Scheduler.css';
 import Cookies from "js-cookie";
@@ -20,7 +22,9 @@ import Swal from 'sweetalert2';
 //     throw new Error(`Error: ${error.message}`);
 //   }
 // };
-
+let red="#e43c33";
+let green="#198754";
+let blue="#0288D1";
 export default class SchedulerCasa extends Component {
   state = {
     userId: null,
@@ -42,6 +46,8 @@ export default class SchedulerCasa extends Component {
     ];
     scheduler.config.hour_date = '%g:%i %A';
     scheduler.config.time_step = 30;
+    scheduler.config.first_hour = 8;
+    scheduler.config.last_hour = 18;
     scheduler.xy.scale_width = 100;
     scheduler.config.hour_size_px = 88;
 
@@ -62,7 +68,21 @@ export default class SchedulerCasa extends Component {
       }
       return true;
     });
-
+    scheduler.templates.event_text = function(start, end, event) {
+      return "<div style='font-size:12px;'>" + event.text + "</div>";
+    };
+    scheduler.ignore_month = function(date){
+      if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+          return true;
+  };
+    scheduler.ignore_week = function(date){
+      if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+          return true;
+  };
+  scheduler.ignore_day = function(date){
+    if (date.getDay() == 6 || date.getDay() == 0) //hides Saturdays and Sundays
+        return true;
+  };
     scheduler.init(this.schedulerContainer, new Date());
     scheduler.clearAll();
 
@@ -123,8 +143,9 @@ export default class SchedulerCasa extends Component {
           text: (calendarInfos.employeeLastName!=null && calendarInfos.employeeFirstName!=null)?calendarInfos.employeeLastName+" "+calendarInfos.employeeFirstName:"",
           start_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.startTime,
           end_date: calendarInfos.workingDay.substring(0,11)+calendarInfos.endTime,
-          color: (isExpired==true)?"gray":((calendarInfos.booked == true)?"green":"blue"),
-          calendarId: calendarInfos.calendarId
+          color: (isExpired==true)?"gray":((calendarInfos.booked == true)?((calendarInfos.bookedForLoggedInEmployee == false)?red:green):blue),
+          calendarId: calendarInfos.calendarId,
+          textColor: "white"
         });
     }
 
@@ -249,7 +270,7 @@ export default class SchedulerCasa extends Component {
       // Ask the user if they want to reserve the appointment
       let confirmed = false;
       let impossible=false;
-      if(event.color =="blue"){
+      if(event.color ==blue){
         Swal.fire({
           title: 'Are you sure?',
           text: "Do you want to reserve this appointment?",
@@ -269,7 +290,7 @@ export default class SchedulerCasa extends Component {
             event.status = true; // Set the status to true or any other value you want
 
       // Change the color of the clicked event
-      event.color = 'green'; // Set the desired color
+      // event.color = green; // Set the desired color
 
       // Save the updated event to the backend
       try {
@@ -327,7 +348,21 @@ export default class SchedulerCasa extends Component {
             popup: 'animate__animated animate__fadeOutUp'
           }
         })
-      }else if(event.color=="green"){
+      } else if(event.color == red){
+        console.log("hellllllllo");
+        // impossible=window.confirm("Sorry, you can't reserve this appointment, it's too late");
+        Swal.fire({
+          title: "Sorry, it's already reserved by an other employee",
+          confirmButtonColor:"#13274F",
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
+        })
+      }
+      else if(event.color==green){
         Swal.fire({
           title: "Sorry, you can't reserve this appointment again",
           confirmButtonColor:"#13274F",
@@ -382,17 +417,22 @@ export default class SchedulerCasa extends Component {
 
 
   render() {
+    
     return (
-      
+      <div  style={{ height: '100vh', backgroundColor: "white" }}>
+        <Legend colors={[red, blue, green, "gray"]} descriptions={["Appointement already booked", "Available appointement for booking", "Appointement Booked for you",  "Appointment has expired"]}/>
+
       <div
         ref={input => {
           this.schedulerContainer = input;
         }}
         style={{
           width: '100%',
-          height: '105.5%',
+          height: '100%',
         }}
       />
+
+      </div>
       
     );
   }
