@@ -23,7 +23,7 @@ const SortDropdown = ({ value, onChange }) => {
       onMouseEnter={handleHover}
       onMouseLeave={handleLeave}
     >
-      Sort by{" "}
+      Date{" "}
       {isOpen && (
         <ul className="dropdown-menu">
           <li onClick={() => handleSortOptionChange("")}> Default </li>{" "}

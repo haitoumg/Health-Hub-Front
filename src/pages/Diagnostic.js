@@ -15,7 +15,7 @@ export default function Diagnostic() {
   const [idSearch, setIdSearch] = useState("");
   const [Search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [sortOption, setSortOption] = useState("");
+  const [sortOption, setSortOption] = useState("recent");
   ///
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(13);
@@ -34,7 +34,11 @@ export default function Diagnostic() {
     const result = await axios.get(
       `http://localhost:9090/diagnosticByDoctor/${tokenObject.personneId}`
     );
-    setDiagnostics(result.data);
+    setDiagnostics(
+      result.data.sort(
+        (a, b) => new Date(b.diagnosticDate) - new Date(a.diagnosticDate)
+      )
+    );
   };
 
   const loadEmployee = async () => {
@@ -62,7 +66,11 @@ export default function Diagnostic() {
         const result2 = await axios.get(
           `http://localhost:9090/diagnosticByEmployeeAndDoctor/${tokenObject.personneId}/${selectedEmployee.idPersone}`
         );
-        setDiagnostics(result2.data);
+        setDiagnostics(
+          result2.data.sort(
+            (a, b) => new Date(b.diagnosticDate) - new Date(a.diagnosticDate)
+          )
+        );
       } catch (error) {
         console.error("Error: ", error);
       }
@@ -86,7 +94,6 @@ export default function Diagnostic() {
   useEffect(() => {
     loadDiagnostic();
     loadEmployee();
-    setSortOption("recent");
     sortDiagnostics();
   }, []);
   useEffect(() => {
@@ -157,7 +164,6 @@ export default function Diagnostic() {
             >
               Search{" "}
             </button>{" "}
-            <SortDropdown value={sortOption} onChange={setSortOption} />{" "}
           </div>{" "}
         </form>{" "}
         <div class="table-responsive">
@@ -165,7 +171,14 @@ export default function Diagnostic() {
             <thead>
               <tr>
                 <th scope="col"> # </th> <th scope="col"> Complet Name </th>{" "}
-                <th scope="col"> Note </th> <th scope="col"> Date </th>{" "}
+                <th scope="col"> Note </th>{" "}
+                <th scope="col">
+                  {" "}
+                  <SortDropdown
+                    value={sortOption}
+                    onChange={setSortOption}
+                  />{" "}
+                </th>{" "}
               </tr>{" "}
             </thead>{" "}
             <tbody>
