@@ -45,7 +45,9 @@ export default function Diagnostic() {
     const result1 = await axios.get("http://localhost:9090/employeesInfos");
     setEmployees(result1.data);
   };
-
+  const filteredEmployees = employees.filter((employee) =>
+    employee.fullName.toLowerCase().startsWith(idSearch.toLowerCase())
+  );
   const loadIdSearch = async () => {
     if (idSearch === "") {
       loadDiagnostic();
@@ -130,7 +132,7 @@ export default function Diagnostic() {
               className="form-control-sm text-center mb-3"
               style={{ width: "200px", marginRight: "10px" }}
               value={idSearch}
-              items={employees}
+              items={filteredEmployees}
               getItemValue={(item) => item.fullName}
               onChange={(event) => setIdSearch(event.target.value)}
               onSelect={(value) => setIdSearch(value)}

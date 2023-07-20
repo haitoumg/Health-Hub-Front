@@ -18,6 +18,9 @@ const AddDiagnostic = () => {
     employeeId: "",
     doctorId: "",
   });
+  const filteredEmployees = employees.filter((employee) =>
+    employee.fullName.toLowerCase().startsWith(idSearch.toLowerCase())
+  );
   const loadDiagnostic = async () => {
     const token = Cookies.get("token");
     const tokenObject = token ? JSON.parse(token) : null;
@@ -76,7 +79,7 @@ const AddDiagnostic = () => {
             className="form-control-sm text-center mb-3"
             style={{ width: "200px", marginTop: "40px" }}
             value={idSearch}
-            items={employees}
+            items={filteredEmployees}
             getItemValue={(item) => item.fullName}
             onChange={(event) => setIdSearch(event.target.value)}
             onSelect={(value) => setIdSearch(value)}
