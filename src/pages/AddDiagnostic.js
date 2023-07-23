@@ -35,6 +35,9 @@ const AddDiagnostic = () => {
   const onInputChange = (e) => {
     setDiagnostics({ ...diagnostics, [e.target.name]: e.target.value });
   };
+  const handleCancel = () => {
+    navigate(-1); // Go back to the previous page
+  };
   const onSubmet = async (e) => {
     e.preventDefault();
     const token = Cookies.get("token");
@@ -47,18 +50,24 @@ const AddDiagnostic = () => {
     diagnostics.doctorId = tokenObject.personneId;
     if (selectedEmployee) {
       diagnostics.employeeId = selectedEmployee.idPersone;
-      await axios.post("http://localhost:9090/diagnostic", diagnostics);
+      if (!isNaN(diagnostics.note)) {
+        // If note is numeric, display an error message
+        Swal.fire("Note !", "Your Note should be string.", "erreur");
+        toast.error("Note should not be numeric!");
+      } else {
+        await axios.post("http://localhost:9090/diagnostic", diagnostics);
 
-      //window.location.reload();
-      Swal.fire(
-        "Diagnostic Added!",
-        "Your Diagnostic has been Added.",
-        "success"
-      );
-      toast.success("Add Diagnostic successfully");
-      navigate("/Diagnostic");
+        //window.location.reload();
+        Swal.fire(
+          "Diagnostic Added!",
+          "Your Diagnostic has been Added.",
+          "success"
+        );
+        toast.success("Add Diagnostic successfully");
+        navigate("/Diagnostic");
 
-      //document.location.href = "http://localhost:3000/Diagnostic";
+        //document.location.href = "http://localhost:3000/Diagnostic";
+      }
     }
   };
   const loadEmployee = async () => {
@@ -129,6 +138,18 @@ const AddDiagnostic = () => {
               className="btn btn-primary ml-2 button"
             >
               Save{" "}
+            </button>{" "}
+            <button
+              style={{
+                width: "200px",
+                marginTop: "40px",
+                background: "#FF0000",
+              }}
+              type="button"
+              className="btn btn-primary ml-2 button"
+              onClick={handleCancel}
+            >
+              Cancel{" "}
             </button>{" "}
           </div>{" "}
         </div>{" "}
